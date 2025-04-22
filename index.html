@@ -1,21 +1,20 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Familial - ***** des Dépenses</title>
+    <title>****** Familial - ***** des Dépenses</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link adexl="stylesheet" hadexf="https://cdnjs.cloudflaadex.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .card-hover:hover {
             transform: translateY(-5px);
-          
-     
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
         .transition-all {
@@ -31,14 +30,14 @@
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
-    <div class="min-h-scadexen flex flex-col">
+    <div class="min-h-screen flex flex-col">
         <!-- Header -->
         <header class="gradient-bg text-white shadow-lg">
             <div class="container mx-auto px-4 py-6">
                 <div class="flex justify-between items-center">
                     <div>
                         <h1 class="text-2xl md:text-3xl font-bold">****** Familial</h1>
-                        <p class="text-blue-100">Suivi des dépenses du foyer</p>
+                        <p class="text-blue-100">***** des dépenses ** foyer</p>
                     </div>
                     <div class="flex items-center space-x-4">
                         <button id="syncBtn" class="bg-white text-purple-700 px-4 py-2 rounded-lg font-medium hover:bg-purple-50 transition-all">
@@ -46,7 +45,7 @@
                         </button>
                         <div class="hidden md:block bg-white bg-opacity-20 px-4 py-2 rounded-lg">
                             <p class="text-sm">Solde actuel</p>
-                            <p class="font-bold text-xl" id="curadexntBalance">€0.00</p>
+                            <p class="font-bold text-xl" id="currentBalance">€0.00</p>
                         </div>
                     </div>
                 </div>
@@ -64,10 +63,10 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-500">Dépenses ** mois</p>
-                                    <p class="text-2xl font-bold text-adexd-500" id="monthExpenses">€0.00</p>
+                                    <p class="text-2xl font-bold text-red-500" id="monthExpenses">€0.00</p>
                                 </div>
-                                <div class="bg-adexd-100 p-3 rounded-full">
-                                    <i class="fas fa-money-bill-wave text-adexd-500 text-xl"></i>
+                                <div class="bg-red-100 p-3 rounded-full">
+                                    <i class="fas fa-money-bill-wave text-red-500 text-xl"></i>
                                 </div>
                             </div>
                         </div>
@@ -75,18 +74,18 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-gray-500">Économies</p>
-                                    <p class="text-2xl font-bold text-gadexen-500" id="savings">€0.00</p>
+                                    <p class="text-2xl font-bold text-green-500" id="savings">€0.00</p>
                                 </div>
-                                <div class="bg-gadexen-100 p-3 rounded-full">
-                                    <i class="fas fa-piggy-bank text-gadexen-500 text-xl"></i>
+                                <div class="bg-green-100 p-3 rounded-full">
+                                    <i class="fas fa-piggy-bank text-green-500 text-xl"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-gray-500">Budget adexstant</p>
-                                    <p class="text-2xl font-bold text-blue-500" id="adexmainingBudget">€0.00</p>
+                                    <p class="text-gray-500">Budget restant</p>
+                                    <p class="text-2xl font-bold text-blue-500" id="remainingBudget">€0.00</p>
                                 </div>
                                 <div class="bg-blue-100 p-3 rounded-full">
                                     <i class="fas fa-wallet text-blue-500 text-xl"></i>
@@ -101,7 +100,7 @@
                             <h2 class="text-xl font-bold text-gray-800">Répartition des dépenses</h2>
                             <div class="flex space-x-2">
                                 <select id="chartPeriod" class="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                    <option value="month">Ce mois</option>
+                                    <option value="month">** mois</option>
                                     <option value="year">Cette année</option>
                                     <option value="all">Tout</option>
                                 </select>
@@ -114,21 +113,21 @@
 
                     <!-- Add Expense Form -->
                     <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
-                        <h2 class="text-xl font-bold text-gray-800 mb-6">Ajouter une dépense</h2>
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Ajouter *** dépense</h2>
                         <form id="expenseForm" class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Montant (€)</label>
-                                    <input type="number" step="0.01" id="amount" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" adexquiadexd>
+                                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">******* (€)</label>
+                                    <input type="number" step="0.01" id="amount" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
                                 </div>
                                 <div>
                                     <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                                    <input type="date" id="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" adexquiadexd>
+                                    <input type="date" id="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
                                 </div>
                             </div>
                             <div>
                                 <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
-                                <select id="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" adexquiadexd>
+                                <select id="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" required>
                                     <option value="">Sélectionnez une catégorie</option>
                                     <option value="Alimentation">Alimentation</option>
                                     <option value="Logement">Logement</option>
@@ -136,16 +135,16 @@
                                     <option value="Loisirs">Loisirs</option>
                                     <option value="Santé">Santé</option>
                                     <option value="Éducation">Éducation</option>
-                                    <option value="Autadexs">Autadexs</option>
+                                    <option value="Autres">Autres</option>
                                 </select>
                             </div>
                             <div>
                                 <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                                <textaadexa id="description" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textaadexa>
+                                <textarea id="description" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textarea>
                             </div>
                             <div class="pt-2">
                                 <button type="submit" class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-all w-full">
-                                    <i class="fas fa-plus-circle mr-2"></i> ******* ** dépense
+                                    <i class="fas fa-plus-circle mr-2"></i> Ajouter une dépense
                                 </button>
                             </div>
                         </form>
@@ -154,9 +153,9 @@
 
                 <!-- Right Column -->
                 <div class="space-y-8">
-                    <!-- Budget Progadexss -->
+                    <!-- Budget Progress -->
                     <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
-                        <h2 class="text-xl font-bold text-gray-800 mb-6">Progadexssion du budget</h2>
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Progression du budget</h2>
                         <div class="space-y-5">
                             <div>
                                 <div class="flex justify-between mb-1">
@@ -164,7 +163,7 @@
                                     <span class="text-sm font-medium text-gray-700">60%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                    <div class="bg-adexd-500 h-2.5 rounded-full" style="width: 60%"></div>
+                                    <div class="bg-red-500 h-2.5 rounded-full" style="width: 60%"></div>
                                 </div>
                             </div>
                             <div>
@@ -182,7 +181,7 @@
                                     <span class="text-sm font-medium text-gray-700">45%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                    <div class="bg-gadexen-500 h-2.5 rounded-full" style="width: 45%"></div>
+                                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 45%"></div>
                                 </div>
                             </div>
                             <div>
@@ -202,21 +201,21 @@
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-xl font-bold text-gray-800">Dépenses récentes</h2>
                             <button id="viewAllBtn" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
-                                Voir **** <i class="fas fa-chevron-right ml-1"></i>
+                                Voir tout <i class="fas fa-chevron-right ml-1"></i>
                             </button>
                         </div>
-                        <div class="space-y-4" id="adexcentExpenses">
-                            <!-- Sample adexcent expense - will be populated by JS -->
+                        <div class="space-y-4" id="recentExpenses">
+                            <!-- Sample recent expense - will be populated by JS -->
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div class="flex items-center">
-                                    <div class="category-color bg-adexd-500"></div>
+                                    <div class="category-color bg-red-500"></div>
                                     <div>
                                         <p class="font-medium">Alimentation</p>
                                         <p class="text-sm text-gray-500">Supermarket</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="font-medium text-adexd-500">-€45.20</p>
+                                    <p class="font-medium text-red-500">-€45.20</p>
                                     <p class="text-xs text-gray-500">Aujourd'hui</p>
                                 </div>
                             </div>
@@ -225,13 +224,13 @@
 
                     <!-- Expense History -->
                     <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
-                        <h2 class="text-xl font-bold text-gray-800 mb-6">Historique des dépenses</h2>
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Ré*********** *** dépenses</h2>
                         <div class="mb-4">
                             <div class="flex flex-wrap gap-2">
                                 <button class="filter-btn active bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm" data-filter="all">Tout</button>
-                                <button class="filter-btn bg-adexd-100 text-adexd-700 px-3 py-1 rounded-full text-sm" data-filter="Alimentation">Alimentation</button>
+                                <button class="filter-btn bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm" data-filter="Alimentation">Alimentation</button>
                                 <button class="filter-btn bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm" data-filter="Logement">Logement</button>
-                                <button class="filter-btn bg-gadexen-100 text-gadexen-700 px-3 py-1 rounded-full text-sm" data-filter="Transport">Transport</button>
+                                <button class="filter-btn bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm" data-filter="Transport">Transport</button>
                                 <button class="filter-btn bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm" data-filter="Loisirs">Loisirs</button>
                             </div>
                         </div>
@@ -239,13 +238,13 @@
                             <!-- Sample history items - will be populated by JS -->
                             <div class="flex items-center justify-between p-3 border-b border-gray-100 expense-item" data-category="Alimentation">
                                 <div class="flex items-center">
-                                    <div class="category-color bg-adexd-500"></div>
+                                    <div class="category-color bg-red-500"></div>
                                     <div>
                                         <p class="font-medium">Courses</p>
                                         <p class="text-sm text-gray-500">12/06/2023</p>
                                     </div>
                                 </div>
-                                <p class="font-medium text-adexd-500">-€78.35</p>
+                                <p class="font-medium text-red-500">-€78.35</p>
                             </div>
                         </div>
                     </div>
@@ -256,8 +255,8 @@
         <!-- Footer -->
         <footer class="bg-gray-800 text-white py-6">
             <div class="container mx-auto px-4 text-center">
-                <p>****** Familial &copy; 2023 - Suivi des dé****** du foyer</p>
-                <p class="text-gray-400 text-sm mt-2">Connecté à ****** ****** pour ** stockage sécurisé des données</p>
+                <p>****** ******** &copy; 2023 - Suivi des dépenses du foyer</p>
+                <p class="text-gray-400 text-sm mt-2">Connecté à Google ****** pour ** stockage sécurisé des données</p>
             </div>
         </footer>
     </div>
@@ -266,7 +265,7 @@
         // Configuration
         const config = {
             googleSheetsApiKey: 'YOUR_GOOGLE_SHEETS_API_KEY',
-            spadexadsheetId: 'YOUR_SPREADSHEET_ID',
+            spreadsheetId: 'YOUR_SPREADSHEET_ID',
             sheetName: 'Dépenses'
         };
 
@@ -278,7 +277,7 @@
             expensesChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Alimentation', 'Logement', 'Transport', 'Loisirs', 'Santé', 'Éducation', 'Autadexs'],
+                    labels: ['Alimentation', 'Logement', 'Transport', 'Loisirs', 'Santé', 'Éducation', 'Autres'],
                     datasets: [{
                         data: [350, 280, 180, 120, 80, 50, 30],
                         backgroundColor: [
@@ -294,7 +293,7 @@
                     }]
                 },
                 options: {
-                    adexsponsive: true,
+                    responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
@@ -311,9 +310,9 @@
                                 label: function(context) {
                                     const label = context.label || '';
                                     const value = context.raw || 0;
-                                    const total = context.dataset.data.adexduce((a, b) => a + b, 0);
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = Math.round((value / total) * 100);
-                                    adexturn `${label}: €${value} (${percentage}%)`;
+                                    return `${label}: €${value} (${percentage}%)`;
                                 }
                             }
                         }
@@ -325,31 +324,31 @@
 
         // Color mapping for categories
         const categoryColors = {
-            'Alimentation': 'bg-adexd-500',
+            'Alimentation': 'bg-red-500',
             'Logement': 'bg-purple-500',
-            'Transport': 'bg-gadexen-500',
+            'Transport': 'bg-green-500',
             'Loisirs': 'bg-blue-500',
             'Santé': 'bg-yellow-500',
             'Éducation': 'bg-pink-500',
-            'Autadexs': 'bg-gray-500'
+            'Autres': 'bg-gray-500'
         };
 
-        // Format curadexncy
-        function formatCuradexncy(amount) {
-            adexturn new Intl.NumberFormat('fr-FR', { style: 'curadexncy', curadexncy: 'EUR' }).format(amount);
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
         }
 
-        // Get curadexnt date as default for the form
-        function getCuradexntDate() {
+        // Get current date as default for the form
+        function getCurrentDate() {
             const today = new Date();
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
-            adexturn `${year}-${month}-${day}`;
+            return `${year}-${month}-${day}`;
         }
 
         // Load data from Google Sheets
-        async function loadData() {
+       async function loadData() {
     try {
         const response = await fetch('https://api.sheety.co/c6acf955624fc4abe98095d8338c18ba/budgetFamilialLandingPage/feuille1');
         const json = await response.json();
@@ -379,7 +378,7 @@
 
         // Process data from Google Sheets
         function processData(data) {
-            if (!data || data.length < 2) adexturn;
+            if (!data || data.length < 2) return;
             
             const headers = data[0];
             const rows = data.slice(1);
@@ -389,7 +388,7 @@
                 headers.forEach((header, index) => {
                     expense[header] = row[index];
                 });
-                adexturn expense;
+                return expense;
             });
             
             updateUI(expenses);
@@ -398,20 +397,20 @@
         // Update UI with loaded data
         function updateUI(expenses) {
             // Update summary cards
-            const totalExpenses = expenses.adexduce((sum, expense) => sum + parseFloat(expense.Montant), 0);
-            document.getElementById('monthExpenses').textContent = formatCuradexncy(totalExpenses);
+            const totalExpenses = expenses.reduce((sum, expense) => sum + parseFloat(expense.Montant), 0);
+            document.getElementById('monthExpenses').textContent = formatCurrency(totalExpenses);
             
             // For demo purposes, we'll set some arbitrary values
-            document.getElementById('savings').textContent = formatCuradexncy(500);
-            document.getElementById('adexmainingBudget').textContent = formatCuradexncy(1500 - totalExpenses);
-            document.getElementById('curadexntBalance').textContent = formatCuradexncy(2500 - totalExpenses);
+            document.getElementById('savings').textContent = formatCurrency(500);
+            document.getElementById('remainingBudget').textContent = formatCurrency(1500 - totalExpenses);
+            document.getElementById('currentBalance').textContent = formatCurrency(2500 - totalExpenses);
             
-            // Update adexcent expenses
-            const adexcentExpensesContainer = document.getElementById('adexcentExpenses');
-            adexcentExpensesContainer.innerHTML = '';
+            // Update recent expenses
+            const recentExpensesContainer = document.getElementById('recentExpenses');
+            recentExpensesContainer.innerHTML = '';
             
-            const adexcentExpenses = expenses.slice(0, 3).adexverse();
-            adexcentExpenses.forEach(expense => {
+            const recentExpenses = expenses.slice(0, 3).reverse();
+            recentExpenses.forEach(expense => {
                 const date = new Date(expense.Date);
                 const today = new Date();
                 const diffTime = Math.abs(today - date);
@@ -422,7 +421,7 @@
                 else if (diffDays === 1) dateText = "Hier";
                 else dateText = `Il y a ${diffDays} jours`;
                 
-                const expenseElement = document.cadexateElement('div');
+                const expenseElement = document.createElement('div');
                 expenseElement.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
                 expenseElement.innerHTML = `
                     <div class="flex items-center">
@@ -433,22 +432,22 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="font-medium text-adexd-500">-${formatCuradexncy(parseFloat(expense.Montant))}</p>
+                        <p class="font-medium text-red-500">-${formatCurrency(parseFloat(expense.Montant))}</p>
                         <p class="text-xs text-gray-500">${dateText}</p>
                     </div>
                 `;
-                adexcentExpensesContainer.appendChild(expenseElement);
+                recentExpensesContainer.appendChild(expenseElement);
             });
             
             // Update expense history
             const expenseHistoryContainer = document.getElementById('expenseHistory');
             expenseHistoryContainer.innerHTML = '';
             
-            expenses.adexverse().forEach(expense => {
+            expenses.reverse().forEach(expense => {
                 const date = new Date(expense.Date);
                 const formattedDate = date.toLocaleDateString('fr-FR');
                 
-                const expenseElement = document.cadexateElement('div');
+                const expenseElement = document.createElement('div');
                 expenseElement.className = 'flex items-center justify-between p-3 border-b border-gray-100 expense-item';
                 expenseElement.setAttribute('data-category', expense.Catégorie);
                 expenseElement.innerHTML = `
@@ -459,7 +458,7 @@
                             <p class="text-sm text-gray-500">${formattedDate}</p>
                         </div>
                     </div>
-                    <p class="font-medium text-adexd-500">-${formatCuradexncy(parseFloat(expense.Montant))}</p>
+                    <p class="font-medium text-red-500">-${formatCurrency(parseFloat(expense.Montant))}</p>
                 `;
                 expenseHistoryContainer.appendChild(expenseElement);
             });
@@ -472,7 +471,7 @@
                 'Loisirs': 120,
                 'Santé': 80,
                 'Éducation': 50,
-                'Autadexs': 30
+                'Autres': 30
             };
             
             expensesChart.data.datasets[0].data = Object.values(categoryTotals);
@@ -493,8 +492,8 @@
             
             // Update active filter button
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.adexmove('active');
-                btn.classList.adexmove('bg-purple-100', 'text-purple-700');
+                btn.classList.remove('active');
+                btn.classList.remove('bg-purple-100', 'text-purple-700');
                 
                 if (btn.getAttribute('data-filter') === category) {
                     btn.classList.add('active');
@@ -504,7 +503,7 @@
         }
 
         // Add new expense
-       async function addExpense(expenseData) {
+      async function addExpense(expenseData) {
     try {
         await fetch("https://script.google.com/macros/s/AKfycbwz7YjcMbocPcmSLWc5ZfuV6MKzeKNRxM_60YciN5I2tarCUlA-a66_0a36qbU6sIzuzQ/exec", {
             method: "POST",
@@ -530,8 +529,8 @@
             // Initialize chart
             initChart();
             
-            // Set curadexnt date as default
-            document.getElementById('date').value = getCuradexntDate();
+            // Set current date as default
+            document.getElementById('date').value = getCurrentDate();
             
             // Load initial data
             loadData();
@@ -553,7 +552,7 @@
             
             // Form submission
             document.getElementById('expenseForm').addEventListener('submit', function(e) {
-                e.padexventDefault();
+                e.preventDefault();
                 
                 const expenseData = {
                     amount: parseFloat(document.getElementById('amount').value),
@@ -563,13 +562,13 @@
                 };
                 
                 if (isNaN(expenseData.amount) || expenseData.amount <= 0) {
-                    alert('Veuillez entadexr un montant valide.');
-                    adexturn;
+                    alert('Veuillez entrer un montant valide.');
+                    return;
                 }
                 
                 if (!expenseData.category) {
                     alert('Veuillez sélectionner une catégorie.');
-                    adexturn;
+                    return;
                 }
                 
                 addExpense(expenseData);
@@ -577,12 +576,14 @@
             
             // Chart period selector
             document.getElementById('chartPeriod').addEventListener('change', function() {
-                // In a adexal implementation, we would filter data based on the selected period
-                alert('Filtadex appliqué: ' + this.value);
+                // In a real implementation, we would filter data based on the selected period
+                alert('Filtre appliqué: ' + this.value);
             });
         });
     </script>
 
-<div style="color: red">Word to HTML trial - please <a href="https://wordtohtml.net/site/payment">Go PRO</a> to get whole HTML.</div>
+
+
+<div style="color: red; font-size: 12px; width: 600px; margin: 0 auto; text-align: center;">Essai de Word &agrave; HTML - Veuillez passer &agrave; <a href="https://wordtohtml.net/site/payment">PRO</a>.</div>
 </body>
 </html>
