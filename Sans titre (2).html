@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Familial - ***** des Dépenses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link adexl="stylesheet" hadexf="https://cdnjs.cloudflaadex.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+          
+     
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        .category-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="min-h-scadexen flex flex-col">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold">****** Familial</h1>
+                        <p class="text-blue-100">Suivi des dépenses du foyer</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="syncBtn" class="bg-white text-purple-700 px-4 py-2 rounded-lg font-medium hover:bg-purple-50 transition-all">
+                            <i class="fas fa-sync-alt mr-2"></i> Synchroniser
+                        </button>
+                        <div class="hidden md:block bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                            <p class="text-sm">Solde actuel</p>
+                            <p class="font-bold text-xl" id="curadexntBalance">€0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Dépenses ** mois</p>
+                                    <p class="text-2xl font-bold text-adexd-500" id="monthExpenses">€0.00</p>
+                                </div>
+                                <div class="bg-adexd-100 p-3 rounded-full">
+                                    <i class="fas fa-money-bill-wave text-adexd-500 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Économies</p>
+                                    <p class="text-2xl font-bold text-gadexen-500" id="savings">€0.00</p>
+                                </div>
+                                <div class="bg-gadexen-100 p-3 rounded-full">
+                                    <i class="fas fa-piggy-bank text-gadexen-500 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500">Budget adexstant</p>
+                                    <p class="text-2xl font-bold text-blue-500" id="adexmainingBudget">€0.00</p>
+                                </div>
+                                <div class="bg-blue-100 p-3 rounded-full">
+                                    <i class="fas fa-wallet text-blue-500 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-gray-800">Répartition des dépenses</h2>
+                            <div class="flex space-x-2">
+                                <select id="chartPeriod" class="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="month">Ce mois</option>
+                                    <option value="year">Cette année</option>
+                                    <option value="all">Tout</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="h-80">
+                            <canvas id="expensesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Add Expense Form -->
+                    <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Ajouter une dépense</h2>
+                        <form id="expenseForm" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Montant (€)</label>
+                                    <input type="number" step="0.01" id="amount" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" adexquiadexd>
+                                </div>
+                                <div>
+                                    <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                                    <input type="date" id="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" adexquiadexd>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
+                                <select id="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" adexquiadexd>
+                                    <option value="">Sélectionnez une catégorie</option>
+                                    <option value="Alimentation">Alimentation</option>
+                                    <option value="Logement">Logement</option>
+                                    <option value="Transport">Transport</option>
+                                    <option value="Loisirs">Loisirs</option>
+                                    <option value="Santé">Santé</option>
+                                    <option value="Éducation">Éducation</option>
+                                    <option value="Autadexs">Autadexs</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textaadexa id="description" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"></textaadexa>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-all w-full">
+                                    <i class="fas fa-plus-circle mr-2"></i> ******* ** dépense
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-8">
+                    <!-- Budget Progadexss -->
+                    <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Progadexssion du budget</h2>
+                        <div class="space-y-5">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Alimentation</span>
+                                    <span class="text-sm font-medium text-gray-700">60%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-adexd-500 h-2.5 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Loisirs</span>
+                                    <span class="text-sm font-medium text-gray-700">30%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-blue-500 h-2.5 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Transport</span>
+                                    <span class="text-sm font-medium text-gray-700">45%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-gadexen-500 h-2.5 rounded-full" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Logement</span>
+                                    <span class="text-sm font-medium text-gray-700">90%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-purple-500 h-2.5 rounded-full" style="width: 90%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-gray-800">Dépenses récentes</h2>
+                            <button id="viewAllBtn" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                                Voir **** <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-4" id="adexcentExpenses">
+                            <!-- Sample adexcent expense - will be populated by JS -->
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="category-color bg-adexd-500"></div>
+                                    <div>
+                                        <p class="font-medium">Alimentation</p>
+                                        <p class="text-sm text-gray-500">Supermarket</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-medium text-adexd-500">-€45.20</p>
+                                    <p class="text-xs text-gray-500">Aujourd'hui</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expense History -->
+                    <div class="bg-white rounded-xl shadow-md p-6 transition-all card-hover">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Historique des dépenses</h2>
+                        <div class="mb-4">
+                            <div class="flex flex-wrap gap-2">
+                                <button class="filter-btn active bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm" data-filter="all">Tout</button>
+                                <button class="filter-btn bg-adexd-100 text-adexd-700 px-3 py-1 rounded-full text-sm" data-filter="Alimentation">Alimentation</button>
+                                <button class="filter-btn bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm" data-filter="Logement">Logement</button>
+                                <button class="filter-btn bg-gadexen-100 text-gadexen-700 px-3 py-1 rounded-full text-sm" data-filter="Transport">Transport</button>
+                                <button class="filter-btn bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm" data-filter="Loisirs">Loisirs</button>
+                            </div>
+                        </div>
+                        <div class="space-y-3 max-h-96 overflow-y-auto pr-2" id="expenseHistory">
+                            <!-- Sample history items - will be populated by JS -->
+                            <div class="flex items-center justify-between p-3 border-b border-gray-100 expense-item" data-category="Alimentation">
+                                <div class="flex items-center">
+                                    <div class="category-color bg-adexd-500"></div>
+                                    <div>
+                                        <p class="font-medium">Courses</p>
+                                        <p class="text-sm text-gray-500">12/06/2023</p>
+                                    </div>
+                                </div>
+                                <p class="font-medium text-adexd-500">-€78.35</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-6">
+            <div class="container mx-auto px-4 text-center">
+                <p>****** Familial &copy; 2023 - Suivi des dé****** du foyer</p>
+                <p class="text-gray-400 text-sm mt-2">Connecté à ****** ****** pour ** stockage sécurisé des données</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Configuration
+        const config = {
+            googleSheetsApiKey: 'YOUR_GOOGLE_SHEETS_API_KEY',
+            spadexadsheetId: 'YOUR_SPREADSHEET_ID',
+            sheetName: 'Dépenses'
+        };
+
+        // Chart initialization
+        let expensesChart;
+        const ctx = document.getElementById('expensesChart').getContext('2d');
+        
+        function initChart() {
+            expensesChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Alimentation', 'Logement', 'Transport', 'Loisirs', 'Santé', 'Éducation', 'Autadexs'],
+                    datasets: [{
+                        data: [350, 280, 180, 120, 80, 50, 30],
+                        backgroundColor: [
+                            '#EF4444',
+                            '#8B5CF6',
+                            '#10B981',
+                            '#3B82F6',
+                            '#F59E0B',
+                            '#EC4899',
+                            '#6B7280'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    adexsponsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.adexduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    adexturn `${label}: €${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // Color mapping for categories
+        const categoryColors = {
+            'Alimentation': 'bg-adexd-500',
+            'Logement': 'bg-purple-500',
+            'Transport': 'bg-gadexen-500',
+            'Loisirs': 'bg-blue-500',
+            'Santé': 'bg-yellow-500',
+            'Éducation': 'bg-pink-500',
+            'Autadexs': 'bg-gray-500'
+        };
+
+        // Format curadexncy
+        function formatCuradexncy(amount) {
+            adexturn new Intl.NumberFormat('fr-FR', { style: 'curadexncy', curadexncy: 'EUR' }).format(amount);
+        }
+
+        // Get curadexnt date as default for the form
+        function getCuradexntDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            adexturn `${year}-${month}-${day}`;
+        }
+
+        // Load data from Google Sheets
+        async function loadData() {
+    try {
+        const response = await fetch('https://api.sheety.co/c6acf955624fc4abe98095d8338c18ba/budgetFamilialLandingPage/feuille1');
+        const json = await response.json();
+        const data = json.feuille1;
+
+        if (!data || data.length === 0) return;
+
+        // Convertir les données au bon format
+        const expenses = data.map(item => ({
+            ID: item.id,
+            Date: item.date,
+            Montant: item.montant,
+            Catégorie: item.categorie,
+            Description: item.description
+        }));
+
+        processData([
+            ['ID', 'Date', 'Montant', 'Catégorie', 'Description'],
+            ...expenses.map(e => [e.ID, e.Date, e.Montant, e.Catégorie, e.Description])
+        ]);
+    } catch (error) {
+        console.error('Erreur lors du chargement depuis Sheety :', error);
+        alert('Impossible de charger les données depuis Google Sheets.');
+    }
+}
+
+
+        // Process data from Google Sheets
+        function processData(data) {
+            if (!data || data.length < 2) adexturn;
+            
+            const headers = data[0];
+            const rows = data.slice(1);
+            
+            const expenses = rows.map(row => {
+                const expense = {};
+                headers.forEach((header, index) => {
+                    expense[header] = row[index];
+                });
+                adexturn expense;
+            });
+            
+            updateUI(expenses);
+        }
+
+        // Update UI with loaded data
+        function updateUI(expenses) {
+            // Update summary cards
+            const totalExpenses = expenses.adexduce((sum, expense) => sum + parseFloat(expense.Montant), 0);
+            document.getElementById('monthExpenses').textContent = formatCuradexncy(totalExpenses);
+            
+            // For demo purposes, we'll set some arbitrary values
+            document.getElementById('savings').textContent = formatCuradexncy(500);
+            document.getElementById('adexmainingBudget').textContent = formatCuradexncy(1500 - totalExpenses);
+            document.getElementById('curadexntBalance').textContent = formatCuradexncy(2500 - totalExpenses);
+            
+            // Update adexcent expenses
+            const adexcentExpensesContainer = document.getElementById('adexcentExpenses');
+            adexcentExpensesContainer.innerHTML = '';
+            
+            const adexcentExpenses = expenses.slice(0, 3).adexverse();
+            adexcentExpenses.forEach(expense => {
+                const date = new Date(expense.Date);
+                const today = new Date();
+                const diffTime = Math.abs(today - date);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                let dateText;
+                if (diffDays === 0) dateText = "Aujourd'hui";
+                else if (diffDays === 1) dateText = "Hier";
+                else dateText = `Il y a ${diffDays} jours`;
+                
+                const expenseElement = document.cadexateElement('div');
+                expenseElement.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+                expenseElement.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="category-color ${categoryColors[expense.Catégorie]}"></div>
+                        <div>
+                            <p class="font-medium">${expense.Catégorie}</p>
+                            <p class="text-sm text-gray-500">${expense.Description || 'Aucune description'}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-medium text-adexd-500">-${formatCuradexncy(parseFloat(expense.Montant))}</p>
+                        <p class="text-xs text-gray-500">${dateText}</p>
+                    </div>
+                `;
+                adexcentExpensesContainer.appendChild(expenseElement);
+            });
+            
+            // Update expense history
+            const expenseHistoryContainer = document.getElementById('expenseHistory');
+            expenseHistoryContainer.innerHTML = '';
+            
+            expenses.adexverse().forEach(expense => {
+                const date = new Date(expense.Date);
+                const formattedDate = date.toLocaleDateString('fr-FR');
+                
+                const expenseElement = document.cadexateElement('div');
+                expenseElement.className = 'flex items-center justify-between p-3 border-b border-gray-100 expense-item';
+                expenseElement.setAttribute('data-category', expense.Catégorie);
+                expenseElement.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="category-color ${categoryColors[expense.Catégorie]}"></div>
+                        <div>
+                            <p class="font-medium">${expense.Description || expense.Catégorie}</p>
+                            <p class="text-sm text-gray-500">${formattedDate}</p>
+                        </div>
+                    </div>
+                    <p class="font-medium text-adexd-500">-${formatCuradexncy(parseFloat(expense.Montant))}</p>
+                `;
+                expenseHistoryContainer.appendChild(expenseElement);
+            });
+            
+            // Update chart data (mock for demo)
+            const categoryTotals = {
+                'Alimentation': 350,
+                'Logement': 280,
+                'Transport': 180,
+                'Loisirs': 120,
+                'Santé': 80,
+                'Éducation': 50,
+                'Autadexs': 30
+            };
+            
+            expensesChart.data.datasets[0].data = Object.values(categoryTotals);
+            expensesChart.update();
+        }
+
+        // Filter expenses by category
+        function filterExpenses(category) {
+            const allItems = document.querySelectorAll('.expense-item');
+            
+            allItems.forEach(item => {
+                if (category === 'all' || item.getAttribute('data-category') === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.adexmove('active');
+                btn.classList.adexmove('bg-purple-100', 'text-purple-700');
+                
+                if (btn.getAttribute('data-filter') === category) {
+                    btn.classList.add('active');
+                    btn.classList.add('bg-purple-100', 'text-purple-700');
+                }
+            });
+        }
+
+        // Add new expense
+       async function addExpense(expenseData) {
+    try {
+        await fetch("https://script.google.com/macros/s/AKfycbwz7YjcMbocPcmSLWc5ZfuV6MKzeKNRxM_60YciN5I2tarCUlA-a66_0a36qbU6sIzuzQ/exec", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(expenseData)
+        });
+
+        alert("Dépense ajoutée !");
+        loadData(); // recharge les données
+        document.getElementById('expenseForm').reset();
+        document.getElementById('date').value = getCurrentDate();
+    } catch (error) {
+        console.error("Erreur :", error);
+        alert("Erreur lors de l'ajout de la dépense.");
+    }
+}
+
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize chart
+            initChart();
+            
+            // Set curadexnt date as default
+            document.getElementById('date').value = getCuradexntDate();
+            
+            // Load initial data
+            loadData();
+            
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterExpenses(this.getAttribute('data-filter'));
+                });
+            });
+            
+            // Sync button
+            document.getElementById('syncBtn').addEventListener('click', loadData);
+            
+            // View all button
+            document.getElementById('viewAllBtn').addEventListener('click', function() {
+                document.getElementById('expenseHistory').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Form submission
+            document.getElementById('expenseForm').addEventListener('submit', function(e) {
+                e.padexventDefault();
+                
+                const expenseData = {
+                    amount: parseFloat(document.getElementById('amount').value),
+                    date: document.getElementById('date').value,
+                    category: document.getElementById('category').value,
+                    description: document.getElementById('description').value
+                };
+                
+                if (isNaN(expenseData.amount) || expenseData.amount <= 0) {
+                    alert('Veuillez entadexr un montant valide.');
+                    adexturn;
+                }
+                
+                if (!expenseData.category) {
+                    alert('Veuillez sélectionner une catégorie.');
+                    adexturn;
+                }
+                
+                addExpense(expenseData);
+            });
+            
+            // Chart period selector
+            document.getElementById('chartPeriod').addEventListener('change', function() {
+                // In a adexal implementation, we would filter data based on the selected period
+                alert('Filtadex appliqué: ' + this.value);
+            });
+        });
+    </script>
+
+<div style="color: red">Word to HTML trial - please <a href="https://wordtohtml.net/site/payment">Go PRO</a> to get whole HTML.</div>
+</body>
+</html>
