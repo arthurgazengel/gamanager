@@ -21,6 +21,14 @@
     }
   </script>
   <style>
+    body {
+      color: black; /* Couleur par défaut */
+    }
+
+    body.dark {
+      color: white; /* Texte en blanc pour le mode sombre */
+    }
+
     .toast {
       position: fixed;
       bottom: 1rem;
@@ -56,6 +64,15 @@
       </div>
     </div>
 
+    <!-- Ajouter une dépense -->
+    <div class="mb-6">
+      <label for="montant" class="block text-sm font-medium mb-1">Montant de la dépense</label>
+      <input id="montant" type="number" class="border p-2 rounded w-full" placeholder="Montant en €">
+      <label for="categorie" class="block text-sm font-medium mb-1">Catégorie</label>
+      <input id="categorie" type="text" class="border p-2 rounded w-full" placeholder="Catégorie">
+      <button onclick="addExpense()" class="bg-blue-600 text-white px-3 py-1 rounded mt-2">Ajouter la dépense</button>
+    </div>
+
     <!-- Statistiques supplémentaires -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
@@ -82,7 +99,8 @@
 
   <script>
     function toggleTheme() {
-      if (document.documentElement.classList.contains('dark')) {
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      if (isDarkMode) {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('theme', 'light');
       } else {
@@ -111,6 +129,36 @@
         select.appendChild(option);
         input.value = '';
         showToast(`Catégorie "${category}" ajoutée`);
+      }
+    }
+
+    function addExpense() {
+      const montant = document.getElementById('montant').value;
+      const categorie = document.getElementById('categorie').value;
+
+      if (montant && categorie) {
+        const expenseData = {
+          montant: montant,
+          categorie: categorie,
+          date: new Date().toISOString()
+        };
+
+        fetch('https://api.sheetdb.io/v1/your_sheetdb_id', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(expenseData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          showToast('Dépense ajoutée');
+          document.getElementById('montant').value = '';
+          document.getElementById('categorie').value = '';
+        })
+        .catch(error => console.error('Erreur:', error));
+      } else {
+        showToast('Veuillez remplir tous les champs');
       }
     }
 
