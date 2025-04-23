@@ -1,116 +1,139 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Familial</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-100 p-4">
-  <h1 class="text-2xl font-bold mb-4">Suivi des dépenses</h1>
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-4xl mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4 text-center">Budget Familial</h1>
 
-  <!-- Total dépenses -->
-  <div class="mb-4">
-    <p class="text-lg">Total des dépenses : <span id="monthExpenses" class="font-bold text-red-600">€0.00</span></p>
-  </div>
+    <!-- Résumé -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-2">Total Dépenses</h2>
+        <p id="monthExpenses" class="text-red-600 text-2xl font-bold">€0.00</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-2">Total Économies</h2>
+        <p id="savings" class="text-green-600 text-2xl font-bold">€0.00</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-2">Budget Prévisionnel</h2>
+        <p id="budget" class="text-blue-600 text-2xl font-bold">€1000.00</p>
+      </div>
+    </div>
 
-  <!-- Graphique -->
-  <div class="mb-8">
-    <canvas id="expensesChart" class="bg-white p-4 rounded shadow"></canvas>
-  </div>
+    <!-- Filtres et export -->
+    <div class="flex justify-between items-center mb-4">
+      <input type="month" id="monthFilter" class="border p-2 rounded" />
+      <button onclick="exportCSV()" class="bg-blue-600 text-white px-4 py-2 rounded">Exporter CSV</button>
+    </div>
 
-  <!-- Formulaire -->
-  <form id="expenseForm" class="bg-white p-4 rounded shadow mb-8 max-w-md space-y-2">
-    <h2 class="text-lg font-semibold mb-2">Ajouter une dépense</h2>
-    <input type="date" id="date" class="w-full border p-2 rounded" required />
-    <input type="number" id="amount" placeholder="Montant (€)" class="w-full border p-2 rounded" required />
-    <input type="text" id="category" placeholder="Catégorie" class="w-full border p-2 rounded" required />
-    <input type="text" id="description" placeholder="Description" class="w-full border p-2 rounded" />
-    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">Ajouter</button>
-  </form>
+    <!-- Graphique -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+      <canvas id="expensesChart"></canvas>
+    </div>
 
-  <!-- Historique -->
-  <div id="expenseHistory" class="space-y-2">
-    <h2 class="text-lg font-semibold mb-2">Historique des dépenses</h2>
+    <!-- Formulaire -->
+    <form id="expenseForm" class="bg-white p-4 rounded shadow mb-6 space-y-2">
+      <h2 class="text-lg font-semibold mb-2">Ajouter une dépense</h2>
+      <input type="date" id="date" class="w-full border p-2 rounded" required />
+      <input type="number" id="amount" placeholder="Montant (€)" class="w-full border p-2 rounded" required />
+      <input type="text" id="category" placeholder="Catégorie" class="w-full border p-2 rounded" required />
+      <input type="text" id="description" placeholder="Description" class="w-full border p-2 rounded" />
+      <button type="submit" class="w-full bg-green-600 text-white p-2 rounded">Ajouter</button>
+    </form>
+
+    <!-- Historique -->
+    <div id="expenseHistory" class="space-y-2"></div>
   </div>
 
   <script>
     const API_URL = 'https://sheetdb.io/api/v1/giny608orux62';
+    let allData = [];
+    const BUDGET = 1000;
 
-    // Formulaire
     document.getElementById('expenseForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-
       const data = {
         date: document.getElementById('date').value,
         montant: document.getElementById('amount').value,
         categorie: document.getElementById('category').value,
         description: document.getElementById('description').value
       };
-
       await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data })
       });
-
       this.reset();
       loadData();
     });
 
-    // Graphique
     const ctx = document.getElementById('expensesChart').getContext('2d');
     const expensesChart = new Chart(ctx, {
       type: 'doughnut',
-      data: {
-        labels: [],
-        datasets: [{
-          data: [],
-          backgroundColor: [
-            '#f87171',
-            '#60a5fa',
-            '#34d399',
-            '#fbbf24',
-            '#a78bfa',
-            '#f472b6'
-          ]
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
+      data: { labels: [], datasets: [{ data: [], backgroundColor: ['#f87171', '#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#f472b6'] }] },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
     });
 
-    // Chargement des données
+    document.getElementById('monthFilter').addEventListener('change', () => {
+      filterAndDisplay();
+    });
+
+    function exportCSV() {
+      let csv = 'Date,Montant,Catégorie,Description\n';
+      allData.forEach(d => {
+        csv += `${d.date},${d.montant},${d.categorie},${d.description || ''}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'depenses.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
     async function loadData() {
       const res = await fetch(API_URL);
       const data = await res.json();
+      allData = data;
+      filterAndDisplay();
+    }
 
-      // Total
+    function filterAndDisplay() {
+      const selectedMonth = document.getElementById('monthFilter').value;
+      let filtered = allData;
+      if (selectedMonth) {
+        filtered = allData.filter(d => d.date && d.date.startsWith(selectedMonth));
+      }
+      updateUI(filtered);
+    }
+
+    function updateUI(data) {
       const total = data.reduce((sum, d) => sum + parseFloat(d.montant || 0), 0);
       document.getElementById('monthExpenses').textContent = `€${total.toFixed(2)}`;
+      document.getElementById('budget').textContent = `€${BUDGET.toFixed(2)}`;
+      document.getElementById('savings').textContent = `€${(BUDGET - total).toFixed(2)}`;
 
-      // Répartition par catégorie
       const categories = {};
       data.forEach(d => {
         if (!categories[d.categorie]) categories[d.categorie] = 0;
         categories[d.categorie] += parseFloat(d.montant || 0);
       });
-
       expensesChart.data.labels = Object.keys(categories);
       expensesChart.data.datasets[0].data = Object.values(categories);
       expensesChart.update();
 
-      // Historique
       const container = document.getElementById('expenseHistory');
-      container.innerHTML = '<h2 class="text-lg font-semibold mb-2">Historique des dépenses</h2>';
-      data.reverse().forEach(d => {
+      container.innerHTML = '';
+      data.slice().reverse().forEach(d => {
         const div = document.createElement('div');
         div.className = 'bg-white p-3 rounded shadow flex justify-between';
         div.innerHTML = `
@@ -124,7 +147,6 @@
       });
     }
 
-    // Auto-chargement
     loadData();
   </script>
 </body>
