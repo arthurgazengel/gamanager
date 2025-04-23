@@ -132,13 +132,26 @@
 
   <script>
     const API_URL = 'https://sheetdb.io/api/v1/giny608orux62';
+
+async function deleteExpense(id) {
+  try {
+    if (!confirm('Es-tu sûr de vouloir supprimer cette dépense ?')) return;
+    await fetch(`${API_URL}/id/${id}`, { method: 'DELETE' });
+    showToast('Dépense supprimée !');
+    loadData();
+  } catch (err) {
+    console.error('Erreur lors de la suppression :', err);
+    showToast('Erreur lors de la suppression');
+  }
+}
     let allData = [];
 
     function toggleTheme() {
-      const root = document.documentElement;
-      root.classList.toggle('dark');
-      localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
-    }
+  const root = document.documentElement;
+  const isDark = root.classList.contains('dark');
+  root.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+}
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
@@ -215,11 +228,21 @@
 
       const histo = document.getElementById('expenseHistory');
       histo.innerHTML = '';
-      data.slice().reverse().forEach(d => {
-        const div = document.createElement('div');
-        div.className = 'bg-white dark:bg-gray-800 p-3 rounded shadow flex justify-between';
-        div.innerHTML = `<div><p class='font-semibold'>${d.categorie}</p><p class='text-sm'>${d.date} - ${d.description}</p></div><p class='text-red-600 font-bold'>-€${parseFloat(d.montant).toFixed(2)}</p>`;
-        histo.appendChild(div);
+      data.slice().reverse().forEach((d, index) => {
+  const div = document.createElement('div');
+  div.className = 'bg-white dark:bg-gray-800 p-3 rounded shadow flex justify-between items-center';
+  div.innerHTML = `
+    <div>
+      <p class='font-semibold'>${d.categorie}</p>
+      <p class='text-sm'>${d.date} - ${d.description}</p>
+    </div>
+    <div class='flex items-center gap-3'>
+      <p class='text-red-600 font-bold'>-€${parseFloat(d.montant).toFixed(2)}</p>
+      <button onclick="deleteExpense('${d.id}')" class='text-xs bg-red-500 text-white px-2 py-1 rounded'>🗑️</button>
+    </div>
+  `;
+  histo.appendChild(div);
+});
       });
     }
 
