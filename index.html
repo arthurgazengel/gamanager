@@ -8,9 +8,17 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
+    function applySavedTheme() {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
+
+    applySavedTheme();
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('service-worker.js')
@@ -34,7 +42,7 @@
     }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-black">
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-white">
   <div class="max-w-5xl mx-auto p-4">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-center w-full">Budget Familial</h1>
@@ -46,17 +54,29 @@
     <div id="toast" class="toast"></div>
 
     <!-- Entrée des salaires -->
-<div class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-6">
-  <label for="salaire" class="block mb-2 font-semibold">Salaire du foyer (€)</label>
-  <input type="number" id="salaire" class="w-full p-2 border rounded" placeholder="Entrez le salaire total du mois" oninput="updateUI(allData)">
-</div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-6">
+      <label for="salaire" class="block mb-2 font-semibold">Salaire du foyer (€)</label>
+      <input type="number" id="salaire" class="w-full p-2 border rounded" placeholder="Entrez le salaire total du mois" oninput="updateUI(allData)">
+    </div>
 
-<!-- Statistiques -->
+    <!-- Statistiques -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Total</h2><p id="monthExpenses" class="text-xl font-bold">€0.00</p></div>
-      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Moyenne</h2><p id="averageExpenses" class="text-xl font-bold">€0.00</p></div>
-      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Max</h2><p id="maxExpense" class="text-xl font-bold">€0.00</p></div>
-      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Top Cat.</h2><p id="topCategory" class="text-xl font-bold">-</p></div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-2">Total Dépenses</h2>
+        <p id="monthExpenses" class="text-xl font-bold">€0.00</p>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-2">Moyenne / Mois</h2>
+        <p id="averageExpenses" class="text-xl font-bold">€0.00</p>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-2">Dépense Max</h2>
+        <p id="maxExpense" class="text-xl font-bold">€0.00</p>
+      </div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-2">Catégorie N°1</h2>
+        <p id="topCategory" class="text-xl font-bold">-</p>
+      </div>
     </div>
 
     <!-- Graphiques -->
@@ -71,27 +91,28 @@
       </div>
     </div>
 
-    <!-- Formulaire + Catégories dynamiques -->
+    <!-- Formulaire de dépense -->
     <form id="expenseForm" class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-6 space-y-2">
       <input type="date" id="date" class="w-full p-2 border rounded" required>
       <input type="number" id="amount" placeholder="Montant" class="w-full p-2 border rounded" required>
       <select id="category" class="w-full p-2 border rounded" required>
-<option value="">Choisir une catégorie</option>
-  <option value="Amazon etc.">Amazon etc.</option>
-  <option value="Courses">Courses</option>
-  <option value="Logement">Logement</option>
-  <option value="Transport">Transport</option>
-  <option value="Loisirs">Loisirs</option>
-  <option value="Vacances">Vacances</option>
-  <option value="Santé">Santé</option>
-  <option value="Restaurant">Restaurant</option>
-  <option value="Autres">Autres</option>
-  <option value="Chat">Chat</option>
-  <option value="Cadeaux">Cadeaux</option>
-</select>
+        <option value="">Choisir une catégorie</option>
+        <option value="Amazon etc.">Amazon etc.</option>
+        <option value="Courses">Courses</option>
+        <option value="Logement">Logement</option>
+        <option value="Transport">Transport</option>
+        <option value="Loisirs">Loisirs</option>
+        <option value="Vacances">Vacances</option>
+        <option value="Santé">Santé</option>
+        <option value="Restaurant">Restaurant</option>
+        <option value="Autres">Autres</option>
+        <option value="Chat">Chat</option>
+        <option value="Cadeaux">Cadeaux</option>
+      </select>
       <input type="text" id="description" placeholder="Description" class="w-full p-2 border rounded">
       <button class="w-full bg-green-600 text-white p-2 rounded" type="submit">Ajouter une dépense</button>
     </form>
+
     <div class="mb-6">
       <input id="newCategory" type="text" placeholder="Nouvelle catégorie" class="p-2 border rounded">
       <button onclick="addCategory()" class="bg-blue-600 text-white px-3 py-1 rounded ml-2">Ajouter</button>
@@ -104,7 +125,6 @@
   <script>
     const API_URL = 'https://sheetdb.io/api/v1/giny608orux62';
     let allData = [];
-    const BUDGET = 1000;
 
     function toggleTheme() {
       const root = document.documentElement;
@@ -143,10 +163,10 @@
       if (!salaireInput.value && localStorage.getItem('salaire')) {
         salaireInput.value = localStorage.getItem('salaire');
       }
+
       const total = data.reduce((sum, d) => sum + parseFloat(d.montant || 0), 0);
       document.getElementById('monthExpenses').textContent = `€${total.toFixed(2)}`;
 
-      const salaireInput = document.getElementById('salaire');
       const salaire = parseFloat(salaireInput.value) || 0;
       localStorage.setItem('salaire', salaire);
       const reste = salaire - total;
