@@ -69,7 +69,17 @@
       <label for="montant" class="block text-sm font-medium mb-1">Montant de la dépense</label>
       <input id="montant" type="number" class="border p-2 rounded w-full" placeholder="Montant en €">
       <label for="categorie" class="block text-sm font-medium mb-1">Catégorie</label>
-      <input id="categorie" type="text" class="border p-2 rounded w-full" placeholder="Catégorie">
+  <select id="category" required class="w-full px-4 py-2 border rounded-lg">
+  <option value="">Choisir une catégorie</option>
+  <option value="Alimentation">Alimentation</option>
+  <option value="Logement">Logement</option>
+  <option value="Transport">Transport</option>
+  <option value="Loisirs">Loisirs</option>
+  <option value="Santé">Santé</option>
+  <option value="Éducation">Éducation</option>
+  <option value="Autres">Autres</option>
+</select>
+
       <button onclick="addExpense()" class="bg-blue-600 text-white px-3 py-1 rounded mt-2">Ajouter la dépense</button>
     </div>
 
