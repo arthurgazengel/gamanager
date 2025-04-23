@@ -1,74 +1,82 @@
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Familial</title>
+  <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
     }
-    .category-color {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 8px;
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('Service worker enregistré'))
+          .catch(err => console.error('Erreur SW', err));
+      });
+    }
+  </script>
+  <style>
+    .toast {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: #4ade80;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+      display: none;
     }
   </style>
 </head>
-<body class="bg-gray-50 font-sans">
-  <div class="min-h-screen flex flex-col">
-    <header class="gradient-bg text-white shadow-lg">
-      <div class="container mx-auto px-4 py-6 flex justify-between items-center">
-        <div>
-          <h1 class="text-2xl md:text-3xl font-bold">Budget Familial</h1>
-          <p class="text-blue-100">Suivi des dépenses du foyer</p>
-        </div>
-        <div class="flex items-center space-x-4">
-          <button id="syncBtn" class="bg-white text-purple-700 px-4 py-2 rounded-lg font-medium hover:bg-purple-50 transition-all">
-            <i class="fas fa-sync-alt mr-2"></i> Synchroniser
-          </button>
-          <div class="hidden md:block bg-white bg-opacity-20 px-4 py-2 rounded-lg">
-            <p class="text-sm">Budget actuel</p>
-            <p class="font-bold text-xl" id="currentBalance">€0.00</p>
-          </div>
-        </div>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-black">
+  <div class="max-w-5xl mx-auto p-4">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-center w-full">Budget Familial</h1>
+      <button onclick="toggleTheme()" class="ml-auto bg-gray-300 dark:bg-gray-700 text-sm text-gray-800 dark:text-white px-3 py-1 rounded shadow">
+        🌙 / ☀️
+      </button>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Entrée des salaires -->
+<div class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-6">
+  <label for="salaire" class="block mb-2 font-semibold">Salaire du foyer (€)</label>
+  <input type="number" id="salaire" class="w-full p-2 border rounded" placeholder="Entrez le salaire total du mois" oninput="updateUI(allData)">
+</div>
+
+<!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Total</h2><p id="monthExpenses" class="text-xl font-bold">€0.00</p></div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Moyenne</h2><p id="averageExpenses" class="text-xl font-bold">€0.00</p></div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Max</h2><p id="maxExpense" class="text-xl font-bold">€0.00</p></div>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow"><h2>Top Cat.</h2><p id="topCategory" class="text-xl font-bold">-</p></div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <h2 class="mb-2 font-semibold">Répartition par catégorie</h2>
+        <canvas id="expensesChart"></canvas>
       </div>
-    </header>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+        <h2 class="mb-2 font-semibold">Évolution mensuelle</h2>
+        <canvas id="monthlyTrendChart"></canvas>
+      </div>
+    </div>
 
-    <main class="flex-grow container mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2 space-y-8">
-          <!-- Résumés -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-xl shadow-md p-6"><p class="text-gray-500">Dépenses ce mois</p><p class="text-2xl font-bold text-red-500" id="monthExpenses">€0.00</p></div>
-            <div class="bg-white rounded-xl shadow-md p-6"><p class="text-gray-500">Économies</p><p class="text-2xl font-bold text-green-500" id="savings">€0.00</p></div>
-            <div class="bg-white rounded-xl shadow-md p-6"><p class="text-gray-500">Budget restant</p><p class="text-2xl font-bold text-blue-500" id="remainingBudget">€0.00</p></div>
-          </div>
-
-          <!-- Graphiques -->
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Répartition des dépenses</h2>
-            <canvas id="expensesChart" height="200"></canvas>
-          </div>
-
-          <!-- Formulaire -->
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-6">Ajouter une dépense</h2>
-            <form id="expenseForm" class="space-y-4">
-              <input type="number" step="0.01" id="amount" placeholder="Montant (€)" required class="w-full px-4 py-2 border rounded-lg" />
-              <input type="date" id="date" required class="w-full px-4 py-2 border rounded-lg" />
-              <select id="category" required class="w-full px-4 py-2 border rounded-lg">
-  <option value="">Choisir une catégorie</option>
+    <!-- Formulaire + Catégories dynamiques -->
+    <form id="expenseForm" class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-6 space-y-2">
+      <input type="date" id="date" class="w-full p-2 border rounded" required>
+      <input type="number" id="amount" placeholder="Montant" class="w-full p-2 border rounded" required>
+      <select id="category" class="w-full p-2 border rounded" required>
+<option value="">Choisir une catégorie</option>
   <option value="Amazon etc.">Amazon etc.</option>
   <option value="Courses">Courses</option>
   <option value="Logement">Logement</option>
@@ -81,133 +89,139 @@
   <option value="Chat">Chat</option>
   <option value="Cadeaux">Cadeaux</option>
 </select>
+      <input type="text" id="description" placeholder="Description" class="w-full p-2 border rounded">
+      <button class="w-full bg-green-600 text-white p-2 rounded" type="submit">Ajouter une dépense</button>
+    </form>
+    <div class="mb-6">
+      <input id="newCategory" type="text" placeholder="Nouvelle catégorie" class="p-2 border rounded">
+      <button onclick="addCategory()" class="bg-blue-600 text-white px-3 py-1 rounded ml-2">Ajouter</button>
+    </div>
 
-              <textarea id="description" rows="2" placeholder="Description" class="w-full px-4 py-2 border rounded-lg"></textarea>
-              <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700">Ajouter</button>
-            </form>
-          </div>
-
-          <!-- Dépenses récentes -->
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-800">Dépenses récentes</h2>
-            <div id="recentExpenses" class="space-y-4 mt-4"></div>
-          </div>
-        </div>
-        <div>
-          <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-6">Historique des dépenses</h2>
-            <div id="expenseHistory" class="space-y-3 max-h-96 overflow-y-auto pr-2"></div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <footer class="bg-gray-800 text-white py-6 text-center">
-      <p>Suivi des dépenses connecté à Google Sheets via SheetDB</p>
-    </footer>
+    <!-- Historique -->
+    <div id="expenseHistory" class="space-y-2"></div>
   </div>
 
   <script>
-    const ctx = document.getElementById('expensesChart').getContext('2d');
-    const expensesChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Dépenses',
-          data: [],
-          backgroundColor: ['#EF4444', '#8B5CF6', '#10B981', '#3B82F6', '#F59E0B', '#EC4899', '#6B7280']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' }
-        }
-      }
-    });
+    const API_URL = 'https://sheetdb.io/api/v1/giny608orux62';
+    let allData = [];
+    const BUDGET = 1000;
 
-    function formatCurrency(amount) {
-      return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount);
+    function toggleTheme() {
+      const root = document.documentElement;
+      root.classList.toggle('dark');
+      localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
     }
 
-    function getCurrentDate() {
-      return new Date().toISOString().split('T')[0];
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    function addCategory() {
+      const val = document.getElementById('newCategory').value.trim();
+      if (val) {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = val;
+        document.getElementById('category').appendChild(opt);
+        document.getElementById('newCategory').value = '';
+        showToast('Catégorie ajoutée !');
+      }
     }
 
     async function loadData() {
-      try {
-        const res = await fetch('https://api.sheety.co/c6acf955624fc4abe98095d8338c18ba/budgetFamilialLandingPage/feuille1');
-        const json = await res.json();
-        const data = json.feuille1.reverse();
-
-        const recent = document.getElementById('recentExpenses');
-        const history = document.getElementById('expenseHistory');
-        recent.innerHTML = '';
-        history.innerHTML = '';
-
-        let total = 0;
-        let catTotals = {};
-        data.forEach((item, i) => {
-          const m = parseFloat(item.montant || 0);
-          total += m;
-          catTotals[item.categorie] = (catTotals[item.categorie] || 0) + m;
-
-          const html = `
-            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-              <div><p class="font-medium">${item.categorie}</p><p class="text-sm text-gray-500">${item.description || ''}</p></div>
-              <div class="text-right"><p class="font-medium text-red-500">-${formatCurrency(m)}</p><p class="text-xs text-gray-500">${item.date}</p></div>
-            </div>`;
-          if (i < 3) recent.innerHTML += html;
-          history.innerHTML += html;
-        });
-
-        document.getElementById('monthExpenses').textContent = formatCurrency(total);
-        document.getElementById('savings').textContent = formatCurrency(500);
-        document.getElementById('remainingBudget').textContent = formatCurrency(2000 - total);
-        document.getElementById('currentBalance').textContent = formatCurrency(2500 - total);
-
-        expensesChart.data.labels = Object.keys(catTotals);
-        expensesChart.data.datasets[0].data = Object.values(catTotals);
-        expensesChart.update();
-      } catch (e) {
-        alert("Erreur de chargement");
-        console.error(e);
-      }
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      allData = data;
+      updateUI(data);
     }
 
-    async function addExpense(expense) {
-      try {
-        await fetch('https://sheetdb.io/api/v1/giny608orux62', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: expense })
-        });
-        alert("Dépense ajoutée !");
-        loadData();
-        document.getElementById('expenseForm').reset();
-        document.getElementById('date').value = getCurrentDate();
-      } catch (e) {
-        alert("Erreur lors de l'ajout.");
-        console.error(e);
+    function updateUI(data) {
+      const salaireInput = document.getElementById('salaire');
+      if (!salaireInput.value && localStorage.getItem('salaire')) {
+        salaireInput.value = localStorage.getItem('salaire');
       }
-    }
+      const total = data.reduce((sum, d) => sum + parseFloat(d.montant || 0), 0);
+      document.getElementById('monthExpenses').textContent = `€${total.toFixed(2)}`;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('date').value = getCurrentDate();
-      loadData();
-      document.getElementById('syncBtn').addEventListener('click', loadData);
-      document.getElementById('expenseForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const expense = {
-          montant: document.getElementById('amount').value,
-          date: document.getElementById('date').value,
-          categorie: document.getElementById('category').value,
-          description: document.getElementById('description').value,
-        };
-        addExpense(expense);
+      const salaireInput = document.getElementById('salaire');
+      const salaire = parseFloat(salaireInput.value) || 0;
+      localStorage.setItem('salaire', salaire);
+      const reste = salaire - total;
+      if (!document.getElementById('resteAffiche')) {
+        const blocSalaire = salaireInput.closest('.bg-white');
+        const p = document.createElement('p');
+        p.id = 'resteAffiche';
+        p.className = 'mt-2 font-semibold';
+        blocSalaire.appendChild(p);
+      }
+      document.getElementById('resteAffiche').textContent = `Reste après dépenses : €${reste.toFixed(2)}`;
+
+      const monthly = {};
+      const cats = {};
+      let max = 0;
+      data.forEach(d => {
+        const m = d.date?.slice(0, 7);
+        if (m) monthly[m] = (monthly[m] || 0) + parseFloat(d.montant || 0);
+        cats[d.categorie] = (cats[d.categorie] || 0) + parseFloat(d.montant || 0);
+        if (parseFloat(d.montant) > max) max = parseFloat(d.montant);
       });
+
+      document.getElementById('averageExpenses').textContent = `€${(total / Object.keys(monthly).length).toFixed(2)}`;
+      document.getElementById('maxExpense').textContent = `€${max.toFixed(2)}`;
+      document.getElementById('topCategory').textContent = Object.entries(cats).sort((a, b) => b[1] - a[1])[0]?.[0] || '-';
+
+      expensesChart.data.labels = Object.keys(cats);
+      expensesChart.data.datasets[0].data = Object.values(cats);
+      expensesChart.update();
+
+      monthlyTrendChart.data.labels = Object.keys(monthly);
+      monthlyTrendChart.data.datasets[0].data = Object.values(monthly);
+      monthlyTrendChart.update();
+
+      const histo = document.getElementById('expenseHistory');
+      histo.innerHTML = '';
+      data.slice().reverse().forEach(d => {
+        const div = document.createElement('div');
+        div.className = 'bg-white dark:bg-gray-800 p-3 rounded shadow flex justify-between';
+        div.innerHTML = `<div><p class='font-semibold'>${d.categorie}</p><p class='text-sm'>${d.date} - ${d.description}</p></div><p class='text-red-600 font-bold'>-€${parseFloat(d.montant).toFixed(2)}</p>`;
+        histo.appendChild(div);
+      });
+    }
+
+    document.getElementById('expenseForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = {
+        date: document.getElementById('date').value,
+        montant: document.getElementById('amount').value,
+        categorie: document.getElementById('category').value,
+        description: document.getElementById('description').value
+      };
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data })
+      });
+      showToast('Dépense ajoutée !');
+      e.target.reset();
+      loadData();
     });
+
+    const expensesChart = new Chart(document.getElementById('expensesChart'), {
+      type: 'doughnut',
+      data: { labels: [], datasets: [{ data: [], backgroundColor: ['#f87171','#60a5fa','#34d399','#fbbf24','#a78bfa'] }] },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+
+    const monthlyTrendChart = new Chart(document.getElementById('monthlyTrendChart'), {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Dépenses', data: [], fill: false, borderColor: '#3b82f6' }] },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    loadData();
   </script>
 </body>
 </html>
