@@ -304,14 +304,6 @@ let editId = null;
       data: { labels: [], datasets: [{ label: 'Dépenses', data: [], fill: false, borderColor: '#3b82f6' }] },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-
-    document.getElementById('salaire').addEventListener('keypress', function(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();  // Empêche l'action par défaut (soumettre un formulaire)
-    updateUI(allData);  // Exécute la fonction de mise à jour
-  }
-});
-
     
     loadData();
   </script>
