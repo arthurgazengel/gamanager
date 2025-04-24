@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budget Familial</title>
   <link rel="manifest" href="manifest.json">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com">function saveSalaire() {
+  const salaire = parseFloat(document.getElementById('salaire').value);
+  if (!isNaN(salaire)) {
+    localStorage.setItem('salaire', salaire);
+    showToast('Salaire enregistré !');
+    updateUI(allData);
+  }
+}
+</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     
@@ -33,7 +41,7 @@
     }
   </style>
 </head>
-<body class="bg-[#F1FAEE] text-[#1D3557]">
+<body class="bg-[#F7FFF7] text-[#292F36]">
   <div class="max-w-5xl mx-auto p-4">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-center w-full animate-fade-in">📊 Budget Familial</h1>
@@ -53,12 +61,12 @@
 </style>
 
     <!-- Entrée des salaires et barre de progression -->
-<div class="bg-[#A8DADC] p-4 rounded shadow mb-6">
+<div class="bg-[#FFE66D] p-4 rounded shadow mb-6">
   <label for="salaire" class="block mb-2 font-semibold">Salaire du foyer (€)</label>
-  <input type="number" id="salaire" class="w-full p-2 border rounded" placeholder="Entrez le salaire total du mois" oninput="updateUI(allData)" onchange="updateUI(allData)">
-  <p id="resteAffiche" class="mt-4 font-bold text-2xl text-green-700">Reste après dépenses : €0.00</p>
-  <div class="w-full h-4 bg-gray-200 rounded mt-2 overflow-hidden">
-    <div id="resteBarre" class="h-full bg-[#E63946]" style="width: 100%"></div>
+  <input type="number" id="salaire" class="w-full p-2 border rounded mb-2" placeholder="Entrez le salaire total du mois" class="w-full p-2 border rounded bg-white text-[#292F36]"> <button onclick="saveSalaire()" class="w-full bg-[#4ECDC4] hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded">💾 Enregistrer le salaire</button>
+  <p id="resteAffiche" class="mt-4 font-bold text-2xl text-[#FF6B6B]">Reste après dépenses : €0.00</p>
+  <div class="w-full h-4 bg-[#FFE66D] rounded mt-2 overflow-hidden">
+    <div id="resteBarre" class="h-full bg-[#FF6B6B]" style="width: 100%"></div>
   </div>
 </div>
 
@@ -67,19 +75,19 @@
 
     <!-- Statistiques -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-[#1D3557] text-[#F1FAEE] p-4 rounded shadow">
+      <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Total Dépenses</h2>
         <p id="monthExpenses" class="text-xl font-bold">€0.00</p>
       </div>
-      <div class="bg-[#1D3557] text-[#F1FAEE] p-4 rounded shadow">
+      <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Moyenne / Mois</h2>
         <p id="averageExpenses" class="text-xl font-bold">€0.00</p>
       </div>
-      <div class="bg-[#1D3557] text-[#F1FAEE] p-4 rounded shadow">
+      <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Dépense Max</h2>
         <p id="maxExpense" class="text-xl font-bold">€0.00</p>
       </div>
-      <div class="bg-[#1D3557] text-[#F1FAEE] p-4 rounded shadow">
+      <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow">
         <h2 class="text-lg font-semibold mb-2">Catégorie N°1</h2>
         <p id="topCategory" class="text-xl font-bold">-</p>
       </div>
@@ -115,8 +123,8 @@
         <option value="Chat">Chat</option>
         <option value="Cadeaux">Cadeaux</option>
       </select>
-      <input type="text" id="description" placeholder="Description" class="w-full p-2 border rounded">
-      <button class="w-full bg-[#E63946] hover:bg-red-700 transition-all duration-300 text-white p-2 rounded" type="submit">➕ Ajouter une dépense</button>
+      <input type="text" id="description" placeholder="Description" class="w-full p-2 border rounded" class="w-full p-2 border rounded bg-white text-[#292F36]">
+      <button class="w-full bg-[#FF6B6B] hover:bg-[#E63946] transition-all duration-300 text-white p-2 rounded" type="submit">➕ Ajouter une dépense</button>
     </form>
 
     <div class="mb-6">
@@ -187,6 +195,10 @@ let editId = null;
     }
 
     function updateUI(data) {
+  const salaireInput = document.getElementById('salaire');
+  if (!salaireInput.value && localStorage.getItem('salaire')) {
+    salaireInput.value = localStorage.getItem('salaire');
+  }
       const salaireInput = document.getElementById('salaire');
       if (!salaireInput.value && localStorage.getItem('salaire')) {
         salaireInput.value = localStorage.getItem('salaire');
@@ -250,7 +262,7 @@ let editId = null;
       histo.innerHTML = '';
       data.slice().reverse().forEach((d, index) => {
   const div = document.createElement('div');
-  div.className = 'bg-[#A8DADC] p-3 rounded shadow flex justify-between items-center';
+  div.className = 'bg-[#FFE66D] p-3 rounded shadow flex justify-between items-center';
   div.innerHTML = `
     <div>
       <p class='font-semibold'>${d.categorie}</p>
@@ -258,8 +270,8 @@ let editId = null;
     </div>
     <div class='flex items-center gap-3'>
       <p class='text-red-600 font-bold'>-€${parseFloat(d.montant).toFixed(2)}</p>
-      <button onclick="editExpense('${d.id}')" class='text-xs bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded'>✏️</button>
-      <button onclick="deleteExpense('${d.id}')" class='text-xs bg-red-500 hover:bg-red-700 transition-colors duration-300 text-white px-2 py-1 rounded'>🗑️</button>
+      <button onclick="editExpense('${d.id}')" class='text-xs bg-[#FFE66D] hover:bg-[#FFD700] text-white px-2 py-1 rounded'>✏️</button>
+      <button onclick="deleteExpense('${d.id}')" class='text-xs bg-[#FF6B6B] hover:bg-red-700 transition-colors duration-300 text-white px-2 py-1 rounded'>🗑️</button>
     </div>
   `;
   histo.appendChild(div);
@@ -304,7 +316,7 @@ let editId = null;
       data: { labels: [], datasets: [{ label: 'Dépenses', data: [], fill: false, borderColor: '#3b82f6' }] },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-    
+
     loadData();
   </script>
 </body>
