@@ -21,29 +21,29 @@
     }
   </style>
 </head>
-<body class="bg-[#F7FFF7] text-[#292F36]">
+<body class="bg-[#FBFBFF] text-[#000000]">
   <div class="max-w-5xl mx-auto p-4">
-    <h1 class="text-3xl font-extrabold text-center mb-2 text-[#292F36]">💰 Suivi Budget Familial</h1>
+    <h1 class="text-3xl font-extrabold text-center mb-2 text-[#000000]">💰 Suivi Budget Familial</h1>
 <p class="text-center text-[#4ECDC4] mb-6">Gérez vos finances mensuelles en toute simplicité</p>
     <div id="toast" class="toast"></div>
 
     <!-- Bloc Salaire -->
-    <div class="bg-[#FFE66D] p-4 rounded shadow mb-6">
+    <div class="bg-[#3626A7] p-4 rounded shadow mb-6">
       <label for="salaire" class="block mb-2 font-semibold text-[#292F36]">💸 Salaire du foyer (€)</label>
       <input type="number" id="salaire" class="w-full p-2 border rounded mb-2 bg-white text-[#292F36]" placeholder="Entrez le salaire total du mois">
-      <button onclick="saveSalaire()" class="w-full bg-[#4ECDC4] hover:bg-[#1D1D1D] text-white font-semibold py-2 px-4 rounded">💾 Enregistrer le salaire</button>
-      <p id="resteAffiche" class="mt-4 font-bold text-2xl text-[#FF6B6B]">Reste après dépenses : €0.00</p>
-      <div class="w-full h-4 bg-[#FFE66D] rounded mt-2 overflow-hidden">
-        <div id="resteBarre" class="h-full bg-[#FF6B6B]" style="width: 100%"></div>
+      <button onclick="saveSalaire()" class="w-full bg-[#3626A7] hover:bg-[#1D1D1D] text-white font-semibold py-2 px-4 rounded">💾 Enregistrer le salaire</button>
+      <p id="resteAffiche" class="mt-4 font-bold text-2xl text-[#FF331F]">Reste après dépenses : €0.00</p>
+      <div class="w-full h-4 bg-[#657ED4] rounded mt-2 overflow-hidden">
+        <div id="resteBarre" class="h-full bg-[#FF331F]" style="width: 100%"></div>
       </div>
     </div>
 
     <!-- Alerte budget dépassé -->
-    <div id="alertZone" class="bg-[#FF6B6B] text-white text-center font-bold py-2 rounded shadow mb-6 hidden">⚠️ Attention : vous avez dépassé votre budget ce mois-ci !</div>
+    <div id="alertZone" class="bg-[#FF331F] text-white text-center font-bold py-2 rounded shadow mb-6 hidden">⚠️ Attention : vous avez dépassé votre budget ce mois-ci !</div>
 
     <!-- Statistiques -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">📊 Total</h2><p id="monthExpenses" class="text-xl font-bold">€0.00</p></div>
+      <div class="bg-[#3626A7] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">📊 Total</h2><p id="monthExpenses" class="text-xl font-bold">€0.00</p></div>
       <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">📈 Moyenne / Mois</h2><p id="averageExpenses" class="text-xl font-bold">€0.00</p></div>
       <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">🚨 Dépense Max</h2><p id="maxExpense" class="text-xl font-bold">€0.00</p></div>
       <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">🏆 Catégorie N°1</h2><p id="topCategory" class="text-xl font-bold">-</p></div>
@@ -66,17 +66,17 @@
       <input type="date" id="date" class="w-full p-2 border rounded bg-white text-[#292F36] font-medium" required>
       <input type="number" id="amount" placeholder="Montant" class="w-full p-2 border rounded bg-white text-[#292F36]" required>
       <select id="category" class="w-full p-2 border rounded bg-white text-[#292F36] font-medium" required>
-        <option value="Courses">Courses</option>
-        <option value="Logement">Logement</option>
-        <option value="Transport">Transport</option>
-        <option value="Loisirs">Loisirs</option>
-        <option value="Santé">Santé</option>
-        <option value="Restaurant">Restaurant</option>
-        <option value="Cadeaux">Cadeaux</option>
-        <option value="Autres">Autres</option>
-      </select>
+  <option value="Logement">🏠 Logement</option>
+  <option value="Alimentation">🛒 Alimentation</option>
+  <option value="Transport">🚌 Transport</option>
+  <option value="Santé">💊 Santé</option>
+  <option value="Loisirs">🎮 Loisirs</option>
+  <option value="Abonnements">💻 Abonnements</option>
+  <option value="Éducation">📚 Éducation</option>
+  <option value="Autres">🔧 Autres</option>
+</select>
       <input type="text" id="description" placeholder="Description" class="w-full p-2 border rounded bg-white text-[#292F36]">
-      <button class="w-full bg-[#FF6B6B] hover:bg-[#DC2626] text-white p-2 rounded" type="submit">➕ Ajouter une dépense</button>
+      <button class="w-full bg-[#FF6B6B] hover:bg-[#B22222] text-white p-2 rounded" type="submit">➕ Ajouter une dépense</button>
     </form>
 
     <!-- Historique -->
@@ -155,7 +155,7 @@
         label: 'Salaire',
         data: Object.keys(monthly).map(() => salaire),
         fill: false,
-        borderColor: '#4ECDC4',
+        borderColor: '#3626A7',
         borderDash: [5, 5]
       };
       monthlyTrendChart.update();
@@ -181,6 +181,8 @@
     async function deleteExpense(id) {
       if (!confirm('Es-tu sûr de vouloir supprimer cette dépense ?')) return;
       await fetch(`${API_URL}/id/${id}`, { method: 'DELETE' });
+      const updated = allData.filter(item => item.id !== id);
+      updateUI(updated);
       showToast('Dépense supprimée !');
       loadData();
     }
@@ -205,7 +207,7 @@
 
     const expensesChart = new Chart(document.getElementById('expensesChart'), {
       type: 'doughnut',
-      data: { labels: [], datasets: [{ data: [], backgroundColor: ['#FF6B6B','#FFE66D','#4ECDC4','#292F36','#F7FFF7'] }] },
+      data: { labels: [], datasets: [{ data: [], backgroundColor: ['#FF331F','#657ED4','#3626A7','#292F36','#FBFBFF'] }] },
       options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
     });
 
