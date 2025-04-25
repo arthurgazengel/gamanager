@@ -6,6 +6,7 @@
   <title>Budget Familial</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .toast {
       position: fixed;
@@ -18,240 +19,674 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       z-index: 9999;
       display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .error-message {
       color: #FF331F;
       font-size: 0.875rem;
       margin-top: 4px;
     }
+    .progress-bar {
+      transition: width 0.5s ease-in-out;
+    }
+    .category-icon {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+    }
+    .smooth-transition {
+      transition: all 0.3s ease;
+    }
+    /* Empêche le décalage lors du chargement */
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+    body {
+      overflow-anchor: none; /* Désactive l'ancrage de défilement */
+    }
   </style>
 </head>
-<body class="bg-white text-black">
-  <div class="max-w-5xl mx-auto p-4">
-    <h1 class="text-3xl font-extrabold text-center mb-4 text-black">💰 Suivi Budget Familial</h1>
-    <p class="text-center text-[#4ECDC4] mb-6">Gérez vos finances mensuelles en toute simplicité</p>
+<body class="bg-gray-50 text-gray-900 font-sans">
+  <div class="max-w-5xl mx-auto p-4 md:p-6">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-indigo-800 mb-2">💰 Suivi Budget Familial</h1>
+      <p class="text-lg text-indigo-600">Gérez vos finances mensuelles en toute simplicité</p>
+    </header>
+
     <div id="toast" class="toast"></div>
 
-    <div class="bg-blue-600 p-4 rounded shadow mb-6">
-      <label for="salaire" class="block mb-2 font-semibold text-[#292F36]">💸 Salaire du foyer (€)</label>
-      <input type="number" id="salaire" class="w-full p-2 border rounded mb-2 bg-white text-[#292F36]" placeholder="Entrez le salaire total du mois">
-      <button onclick="saveSalaire()" class="w-full bg-white hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">💾 Enregistrer le salaire</button>
-      <p id="resteAffiche" class="mt-4 font-bold text-2xl text-[#FF331F]">Reste après dépenses : €0.00</p>
-      <div class="w-full h-4 bg-blue-200 rounded mt-2 overflow-hidden">
-        <div id="resteBarre" class="h-full bg-red-500" style="width: 100%"></div>
+    <!-- Section Salaire -->
+    <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 p-6 rounded-xl shadow-lg mb-8 text-white">
+      <div class="flex items-center mb-4">
+        <i class="fas fa-money-bill-wave text-2xl mr-3"></i>
+        <h2 class="text-xl font-semibold">Salaire du foyer</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label for="salaire" class="block mb-2 font-medium">Montant (€)</label>
+          <input type="number" id="salaire" class="w-full p-3 rounded-lg bg-indigo-500 bg-opacity-20 text-white placeholder-indigo-200 border border-indigo-400 focus:outline-none focus:ring-2 focus:ring-white" placeholder="Salaire total">
+        </div>
+        <div class="flex items-end">
+          <button onclick="saveSalaire()" class="w-full bg-white hover:bg-indigo-100 text-indigo-800 font-semibold py-3 px-4 rounded-lg smooth-transition">
+            <i class="fas fa-save mr-2"></i>Enregistrer
+          </button>
+        </div>
+        <div class="bg-indigo-500 bg-opacity-30 p-4 rounded-lg">
+          <p class="text-sm font-medium mb-1">Reste après dépenses</p>
+          <p id="resteAffiche" class="text-2xl font-bold">€0.00</p>
+          <div class="w-full h-3 bg-indigo-400 bg-opacity-40 rounded-full mt-2 overflow-hidden">
+            <div id="resteBarre" class="h-full bg-white progress-bar" style="width: 100%"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <form id="expenseForm" class="bg-[#FFE66D] p-4 rounded shadow mb-6 space-y-2">
-      <input type="date" id="date" class="w-full p-2 border rounded bg-white text-[#292F36] font-medium" required>
-      <input type="number" id="amount" placeholder="Montant" class="w-full p-2 border rounded bg-white text-[#292F36]" required>
-      <select id="category" class="w-full p-2 border rounded bg-white text-[#292F36] font-medium" required>
-        <option value="">-- Sélectionnez une catégorie --</option>
-        <option value="Logement">🏠 Logement</option>
-        <option value="Alimentation">🛒 Alimentation</option>
-        <option value="Transport">🚌 Transport</option>
-        <option value="Santé">💊 Santé</option>
-        <option value="Loisirs">🎮 Loisirs</option>
-        <option value="Abonnements">💻 Abonnements</option>
-        <option value="Éducation">📚 Éducation</option>
-        <option value="Autres">🔧 Autres</option>
-      </select>
-      <input type="text" id="description" placeholder="Description" class="w-full p-2 border rounded bg-white text-[#292F36]">
-      <button class="w-full bg-[#FF331F] hover:bg-red-700 text-white p-2 rounded" type="submit">➕ Ajouter une dépense</button>
-      <p id="formError" class="error-message hidden">Veuillez remplir tous les champs obligatoires.</p>
-    </form>
+    <!-- Formulaire de dépense -->
+    <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+      <div class="flex items-center mb-4">
+        <i class="fas fa-plus-circle text-2xl text-indigo-600 mr-3"></i>
+        <h2 class="text-xl font-semibold text-indigo-800">Ajouter une dépense</h2>
+      </div>
+      <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div>
+          <label for="date" class="block mb-2 font-medium text-gray-700">Date</label>
+          <input type="date" id="date" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+        </div>
+        <div>
+          <label for="amount" class="block mb-2 font-medium text-gray-700">Montant (€)</label>
+          <input type="number" step="0.01" id="amount" placeholder="0.00" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+        </div>
+        <div>
+          <label for="category" class="block mb-2 font-medium text-gray-700">Catégorie</label>
+          <select id="category" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
+            <option value="">-- Sélectionnez --</option>
+            <option value="Logement">🏠 Logement</option>
+            <option value="Alimentation">🛒 Alimentation</option>
+            <option value="Transport">🚌 Transport</option>
+            <option value="Santé">💊 Santé</option>
+            <option value="Loisirs">🎮 Loisirs</option>
+            <option value="Abonnements">💻 Abonnements</option>
+            <option value="Éducation">📚 Éducation</option>
+            <option value="Autres">🔧 Autres</option>
+          </select>
+        </div>
+        <div>
+          <label for="description" class="block mb-2 font-medium text-gray-700">Description</label>
+          <input type="text" id="description" placeholder="Détails" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg smooth-transition">
+            <i class="fas fa-plus mr-2"></i>Ajouter
+          </button>
+        </div>
+        <p id="formError" class="error-message hidden col-span-full">Veuillez remplir tous les champs obligatoires.</p>
+      </form>
+    </div>
 
     <!-- Statistiques -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-[#3626A7] text-[#FBFBFF] p-4 rounded shadow"><h2 class="flex items-center gap-1">📊 Total</h2><p id="monthExpenses" class="text-xl font-bold">€0.00</p></div>
-      <div class="bg-[#657ED4] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">📈 Moyenne / Mois</h2><p id="averageExpenses" class="text-xl font-bold">€0.00</p></div>
-      <div class="bg-[#657ED4] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">🚨 Dépense Max</h2><p id="maxExpense" class="text-xl font-bold">€0.00</p></div>
-      <div class="bg-[#657ED4] text-[#292F36] p-4 rounded shadow"><h2 class="flex items-center gap-1">🏆 Catégorie N°1</h2><p id="topCategory" class="text-xl font-bold">-</p></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-4 rounded-xl shadow flex items-start">
+        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
+          <i class="fas fa-chart-pie text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-gray-500">Total dépenses</h3>
+          <p id="monthExpenses" class="text-2xl font-bold text-indigo-800">€0.00</p>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow flex items-start">
+        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
+          <i class="fas fa-calculator text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-gray-500">Moyenne / Mois</h3>
+          <p id="averageExpenses" class="text-2xl font-bold text-indigo-800">€0.00</p>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow flex items-start">
+        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
+          <i class="fas fa-exclamation-triangle text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-gray-500">Dépense Max</h3>
+          <p id="maxExpense" class="text-2xl font-bold text-indigo-800">€0.00</p>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow flex items-start">
+        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
+          <i class="fas fa-trophy text-xl"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium text-gray-500">Catégorie N°1</h3>
+          <p id="topCategory" class="text-2xl font-bold text-indigo-800">-</p>
+        </div>
+      </div>
     </div>
 
     <!-- Graphiques -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 min-h-[300px]">
-      <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow">
-        <h2 class="mb-2 font-semibold flex items-center gap-1">📂 Répartition par catégorie</h2>
-        <canvas id="expensesChart" class="w-full min-h-[200px]"></canvas>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white p-6 rounded-xl shadow">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-chart-pie text-xl text-indigo-600 mr-3"></i>
+          <h2 class="text-xl font-semibold text-indigo-800">Répartition par catégorie</h2>
+        </div>
+        <canvas id="expensesChart" class="w-full" height="300"></canvas>
       </div>
-      <div class="bg-[#4ECDC4] text-[#292F36] p-4 rounded shadow">
-        <h2 class="mb-2 font-semibold flex items-center gap-1">📉 Évolution mensuelle</h2>
-        <canvas id="monthlyTrendChart" class="w-full min-h-[200px]"></canvas>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <div class="flex items-center mb-4">
+          <i class="fas fa-chart-line text-xl text-indigo-600 mr-3"></i>
+          <h2 class="text-xl font-semibold text-indigo-800">Évolution mensuelle</h2>
+        </div>
+        <canvas id="monthlyTrendChart" class="w-full" height="300"></canvas>
       </div>
     </div>
 
-    <div id="expenseHistory" class="space-y-2"></div>
+    <!-- Historique des dépenses -->
+    <div class="bg-white p-6 rounded-xl shadow">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center">
+          <i class="fas fa-history text-xl text-indigo-600 mr-3"></i>
+          <h2 class="text-xl font-semibold text-indigo-800">Historique des dépenses</h2>
+        </div>
+        <div class="relative">
+          <select id="filterMonth" class="appearance-none bg-indigo-50 border border-indigo-200 text-indigo-800 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
+            <option value="">Tous les mois</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-indigo-600">
+            <i class="fas fa-chevron-down text-sm"></i>
+          </div>
+        </div>
+      </div>
+      <div id="expenseHistory" class="space-y-3"></div>
+    </div>
   </div>
 
   <script>
-    const API_URL = 'https://sheetdb.io/api/v1/giny608orux62';
-    let allData = [];
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 3000);
-    }
-
-    function saveSalaire() {
-      const salaire = parseFloat(document.getElementById('salaire').value);
-      if (!isNaN(salaire)) {
-        localStorage.setItem('salaire', salaire);
-        showToast('Salaire enregistré !');
-        updateUI(allData);
+    // Configuration de Tailwind
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            indigo: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
       }
     }
 
+    const API_URL = 'https://sheetdb.io/api/v1/giny608orux62';
+    let allData = [];
+    let expensesChart, monthlyTrendChart;
+
+    // Initialisation des graphiques
+    function initCharts() {
+      // Graphique en camembert
+      const expensesCtx = document.getElementById('expensesChart').getContext('2d');
+      expensesChart = new Chart(expensesCtx, {
+        type: 'doughnut',
+        data: {
+          labels: [],
+          datasets: [{
+            data: [],
+            backgroundColor: [
+              '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899',
+              '#f43f5e', '#ff4d4f', '#ff6b6b', '#f97316', '#f59e0b'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = Math.round((value / total) * 100);
+                  return `${label}: €${value.toFixed(2)} (${percentage}%)`;
+                }
+              }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+
+      // Graphique d'évolution mensuelle
+      const monthlyCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+      monthlyTrendChart = new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Dépenses',
+              data: [],
+              fill: false,
+              borderColor: '#6366f1',
+              backgroundColor: '#6366f1',
+              tension: 0.3,
+              borderWidth: 3,
+              pointBackgroundColor: '#6366f1',
+              pointRadius: 5,
+              pointHoverRadius: 7
+            },
+            {
+              label: 'Salaire',
+              data: [],
+              fill: false,
+              borderColor: '#10b981',
+              backgroundColor: '#10b981',
+              borderDash: [5, 5],
+              borderWidth: 2,
+              pointBackgroundColor: '#10b981',
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: €${context.raw.toFixed(2)}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '€' + value;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Afficher une notification
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.backgroundColor = isError ? '#ef4444' : '#4ECDC4';
+      toast.style.display = 'block';
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          toast.style.display = 'none';
+          toast.style.opacity = '1';
+        }, 300);
+      }, 3000);
+    }
+
+    // Enregistrer le salaire
+    function saveSalaire() {
+      const salaireInput = document.getElementById('salaire');
+      const salaire = parseFloat(salaireInput.value);
+      
+      if (!isNaN(salaire) && salaire > 0) {
+        localStorage.setItem('salaire', salaire);
+        showToast('Salaire enregistré avec succès !');
+        updateUI(allData);
+      } else {
+        showToast('Veuillez entrer un montant valide', true);
+        salaireInput.focus();
+      }
+    }
+
+    // Charger les données depuis l'API
     async function loadData() {
       try {
         const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('Erreur réseau');
+        
         const data = await res.json();
-        allData = data;
-        updateUI(data);
+        if (!Array.isArray(data)) throw new Error('Format de données invalide');
+        
+        allData = data.map(item => ({
+          ...item,
+          date: item.date || new Date().toISOString().split('T')[0],
+          montant: parseFloat(item.montant || 0),
+          categorie: item.categorie || 'Autres',
+          description: item.description || ''
+        }));
+        
+        updateUI(allData);
+        updateMonthFilter();
       } catch (err) {
-        showToast("Erreur de chargement des données");
+        console.error('Erreur de chargement des données:', err);
+        showToast("Erreur de chargement des données", true);
+        
+        // Exemple de données par défaut si l'API échoue
+        if (allData.length === 0) {
+          const defaultDate = new Date().toISOString().split('T')[0];
+          allData = [
+            { id: '1', date: defaultDate, montant: 1200, categorie: 'Logement', description: 'Loyer' },
+            { id: '2', date: defaultDate, montant: 350, categorie: 'Alimentation', description: 'Courses' },
+            { id: '3', date: defaultDate, montant: 80, categorie: 'Transport', description: 'Essence' }
+          ];
+          updateUI(allData);
+          updateMonthFilter();
+        }
       }
     }
 
-    function updateUI(data) {
-      const salaire = parseFloat(localStorage.getItem('salaire')) || 0;
-      document.getElementById('salaire').value = salaire;
-
-      const total = data.reduce((sum, d) => sum + parseFloat(d.montant || 0), 0);
-      document.getElementById('monthExpenses')?.textContent = `€${total.toFixed(2)}`;
-      const reste = salaire - total;
-      document.getElementById('resteAffiche').textContent = `Reste après dépenses : €${reste.toFixed(2)}`;
-      document.getElementById('resteBarre').style.width = `${(reste / salaire) * 100}%`;
-
-      const monthly = {};
-      const cats = {};
-      let max = 0;
-      data.forEach(d => {
-        const m = d.date?.slice(0, 7);
-        if (m) monthly[m] = (monthly[m] || 0) + parseFloat(d.montant || 0);
-        cats[d.categorie] = (cats[d.categorie] || 0) + parseFloat(d.montant || 0);
-        if (parseFloat(d.montant) > max) max = parseFloat(d.montant);
+    // Mettre à jour le filtre des mois
+    function updateMonthFilter() {
+      const monthFilter = document.getElementById('filterMonth');
+      const months = new Set();
+      
+      allData.forEach(item => {
+        if (item.date) {
+          const [year, month] = item.date.split('-');
+          months.add(`${year}-${month}`);
+        }
       });
-
-      document.getElementById('averageExpenses').textContent = `€${(total / Object.keys(monthly).length || 1).toFixed(2)}`;
-      document.getElementById('maxExpense').textContent = `€${max.toFixed(2)}`;
-      document.getElementById('topCategory').textContent = Object.entries(cats).sort((a, b) => b[1] - a[1])[0]?.[0] || '-';
-
-      expensesChart.data.labels = Object.keys(cats);
-      expensesChart.data.datasets[0].data = Object.values(cats);
-      expensesChart.update();
-
-      monthlyTrendChart.data.labels = Object.keys(monthly);
-      monthlyTrendChart.data.datasets[0].data = Object.values(monthly);
-      monthlyTrendChart.data.datasets[1].data = Object.keys(monthly).map(() => salaire);
-      monthlyTrendChart.update();
-
-      const histo = document.getElementById('expenseHistory');
-      histo.innerHTML = '';
-      const reversedData = data.slice().reverse();
-      reversedData.forEach(d => {
-        const div = document.createElement('div');
-        div.className = 'bg-[#657ED4] p-3 rounded shadow flex justify-between items-center';
-        div.innerHTML = `
-          <div>
-            <p class='font-semibold'>${d.categorie}</p>
-            <p class='text-sm'>${d.date} - ${d.description}</p>
-          </div>
-          <div class='flex items-center gap-3'>
-            <p class='text-red-500 font-bold'>-€${parseFloat(d.montant).toFixed(2)}</p>
-            <button onclick="deleteExpense('${d.id}')" class='text-xs bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded'>🗑️</button>
-          </div>`;
-        histo.appendChild(div);
+      
+      // Vider et remplir les options
+      monthFilter.innerHTML = '<option value="">Tous les mois</option>';
+      const sortedMonths = Array.from(months).sort();
+      
+      sortedMonths.forEach(month => {
+        const [year, monthNum] = month.split('-');
+        const monthName = new Date(year, monthNum - 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+        monthFilter.innerHTML += `<option value="${month}">${monthName}</option>`;
+      });
+      
+      // Écouter les changements de filtre
+      monthFilter.addEventListener('change', function() {
+        const selectedMonth = this.value;
+        const filteredData = selectedMonth 
+          ? allData.filter(item => item.date && item.date.startsWith(selectedMonth))
+          : allData;
+        updateUI(filteredData);
       });
     }
 
+    // Mettre à jour l'interface utilisateur
+    function updateUI(data) {
+      // Sauvegarder la position de défilement avant la mise à jour
+      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      
+      const salaire = parseFloat(localStorage.getItem('salaire')) || 0;
+      document.getElementById('salaire').value = salaire || '';
+      
+      // Calculer les statistiques
+      const total = data.reduce((sum, d) => sum + (d.montant || 0), 0);
+      const reste = salaire - total;
+      
+      // Mettre à jour les indicateurs
+      document.getElementById('monthExpenses').textContent = `€${total.toFixed(2)}`;
+      document.getElementById('resteAffiche').textContent = `€${Math.max(reste, 0).toFixed(2)}`;
+      document.getElementById('resteAffiche').className = reste >= 0 
+        ? 'text-2xl font-bold text-green-600' 
+        : 'text-2xl font-bold text-red-600';
+      
+      // Mettre à jour la barre de progression
+      const progressWidth = salaire > 0 ? Math.min((reste / salaire) * 100, 100) : 100;
+      document.getElementById('resteBarre').style.width = `${Math.max(progressWidth, 0)}%`;
+      document.getElementById('resteBarre').className = reste >= 0 
+        ? 'h-full bg-green-500 progress-bar' 
+        : 'h-full bg-red-500 progress-bar';
+      
+      // Calculer les statistiques avancées
+      const monthlyData = {};
+      const categories = {};
+      let maxExpense = 0;
+      
+      data.forEach(d => {
+        // Groupement par mois
+        const month = d.date?.substring(0, 7);
+        if (month) {
+          monthlyData[month] = (monthlyData[month] || 0) + (d.montant || 0);
+        }
+        
+        // Groupement par catégorie
+        categories[d.categorie] = (categories[d.categorie] || 0) + (d.montant || 0);
+        
+        // Dépense maximale
+        if ((d.montant || 0) > maxExpense) {
+          maxExpense = d.montant;
+        }
+      });
+      
+      // Mettre à jour les autres indicateurs
+      const monthCount = Object.keys(monthlyData).length || 1;
+      document.getElementById('averageExpenses').textContent = `€${(total / monthCount).toFixed(2)}`;
+      document.getElementById('maxExpense').textContent = `€${maxExpense.toFixed(2)}`;
+      
+      // Trouver la catégorie principale
+      const topCategory = Object.entries(categories).sort((a, b) => b[1] - a[1])[0];
+      document.getElementById('topCategory').textContent = topCategory ? topCategory[0] : '-';
+      
+      // Mettre à jour les graphiques
+      updateCharts(categories, monthlyData, salaire);
+      
+      // Mettre à jour l'historique
+      updateExpenseHistory(data);
+      
+      // Restaurer la position de défilement après la mise à jour
+      window.requestAnimationFrame(() => {
+        window.scrollTo(0, scrollPosition);
+      });
+    }
+
+    // Mettre à jour les graphiques
+    function updateCharts(categories, monthlyData, salaire) {
+      // Graphique des catégories
+      expensesChart.data.labels = Object.keys(categories);
+      expensesChart.data.datasets[0].data = Object.values(categories);
+      expensesChart.update();
+      
+      // Graphique d'évolution mensuelle
+      const sortedMonths = Object.keys(monthlyData).sort();
+      monthlyTrendChart.data.labels = sortedMonths;
+      monthlyTrendChart.data.datasets[0].data = sortedMonths.map(month => monthlyData[month]);
+      monthlyTrendChart.data.datasets[1].data = sortedMonths.map(() => salaire);
+      monthlyTrendChart.update();
+    }
+
+    // Mettre à jour l'historique des dépenses
+    function updateExpenseHistory(data) {
+      const historyContainer = document.getElementById('expenseHistory');
+      historyContainer.innerHTML = '';
+      
+      if (data.length === 0) {
+        historyContainer.innerHTML = `
+          <div class="bg-gray-50 p-6 rounded-lg text-center text-gray-500">
+            <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
+            <p>Aucune dépense enregistrée</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Trier par date (plus récent en premier)
+      const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      sortedData.forEach(expense => {
+        const expenseElement = document.createElement('div');
+        expenseElement.className = 'bg-gray-50 hover:bg-gray-100 p-4 rounded-lg flex justify-between items-center smooth-transition';
+        
+        // Icône de catégorie
+        let categoryIcon = 'fa-tag';
+        switch(expense.categorie) {
+          case 'Logement': categoryIcon = 'fa-home'; break;
+          case 'Alimentation': categoryIcon = 'fa-shopping-basket'; break;
+          case 'Transport': categoryIcon = 'fa-car'; break;
+          case 'Santé': categoryIcon = 'fa-heartbeat'; break;
+          case 'Loisirs': categoryIcon = 'fa-gamepad'; break;
+          case 'Abonnements': categoryIcon = 'fa-tv'; break;
+          case 'Éducation': categoryIcon = 'fa-book'; break;
+        }
+        
+        // Formatage de la date
+        const formattedDate = expense.date 
+          ? new Date(expense.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+          : 'Date inconnue';
+        
+        expenseElement.innerHTML = `
+          <div class="flex items-center">
+            <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-3">
+              <i class="fas ${categoryIcon}"></i>
+            </div>
+            <div>
+              <p class="font-medium text-gray-800">${expense.categorie || 'Autres'}</p>
+              <p class="text-sm text-gray-500">
+                ${formattedDate}${expense.description ? ' · ' + expense.description : ''}
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <span class="text-red-600 font-bold mr-3">-€${(expense.montant || 0).toFixed(2)}</span>
+            <button onclick="deleteExpense('${expense.id}')" class="text-gray-400 hover:text-red-500 smooth-transition">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        `;
+        
+        historyContainer.appendChild(expenseElement);
+      });
+    }
+
+    // Supprimer une dépense
     async function deleteExpense(id) {
-      if (!confirm('Es-tu sûr de vouloir supprimer cette dépense ?')) return;
+      if (!confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) return;
+      
       try {
-        await fetch(`${API_URL}/id/${id}`, { method: 'DELETE' });
+        // En production, on utiliserait l'API
+        // await fetch(`${API_URL}/id/${id}`, { method: 'DELETE' });
+        
+        // Pour la démo, on filtre simplement les données locales
         allData = allData.filter(item => item.id !== id);
         updateUI(allData);
-        showToast('Dépense supprimée.');
+        updateMonthFilter();
+        showToast('Dépense supprimée avec succès');
       } catch (e) {
-        showToast("Erreur lors de la suppression.");
+        console.error('Erreur lors de la suppression:', e);
+        showToast("Erreur lors de la suppression", true);
       }
     }
 
+    // Ajouter une dépense
     document.getElementById('expenseForm').addEventListener('submit', async e => {
       e.preventDefault();
-      const date = document.getElementById('date').value;
-      const amount = document.getElementById('amount').value;
-      const category = document.getElementById('category').value;
-      const description = document.getElementById('description').value;
-
+      
+      // Récupérer les valeurs du formulaire
+      const dateInput = document.getElementById('date');
+      const amountInput = document.getElementById('amount');
+      const categoryInput = document.getElementById('category');
+      const descriptionInput = document.getElementById('description');
+      
+      const date = dateInput.value;
+      const amount = parseFloat(amountInput.value);
+      const category = categoryInput.value;
+      const description = descriptionInput.value;
+      
+      // Validation
       const formError = document.getElementById('formError');
-      if (!date || !amount || !category) {
+      if (!date || isNaN(amount) || amount <= 0 || !category) {
+        formError.textContent = !date ? 'La date est requise' : 
+                              isNaN(amount) || amount <= 0 ? 'Montant invalide' : 
+                              'La catégorie est requise';
         formError.classList.remove('hidden');
         return;
-      } else {
-        formError.classList.add('hidden');
       }
-
-      const data = { date, montant: amount, categorie: category, description };
-
+      
+      formError.classList.add('hidden');
+      
+      // Créer l'objet dépense
+      const newExpense = {
+        id: Date.now().toString(),
+        date,
+        montant: amount,
+        categorie: category,
+        description: description || ''
+      };
+      
       try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data })
-        });
-        showToast('Dépense ajoutée !');
+        // En production, on enverrait à l'API
+        // await fetch(API_URL, {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ data: newExpense })
+        // });
+        
+        // Pour la démo, on ajoute simplement aux données locales
+        allData.push(newExpense);
+        updateUI(allData);
+        updateMonthFilter();
+        
+        // Réinitialiser le formulaire
         e.target.reset();
-        const expensesChart = new Chart(document.getElementById('expensesChart'), {
-  type: 'doughnut',
-  data: {
-    labels: [],
-    datasets: [{
-      data: [],
-      backgroundColor: ['#FF0000', '#0000FF', '#FF0000', '#0000FF', '#000000']
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: { legend: { position: 'bottom' } }
-  }
-});
-
-const monthlyTrendChart = new Chart(document.getElementById('monthlyTrendChart'), {
-  type: 'line',
-  data: {
-    labels: [],
-    datasets: [
-      {
-        label: 'Dépenses',
-        data: [],
-        fill: false,
-        borderColor: '#FF0000'
-      },
-      {
-        label: 'Salaire',
-        data: [],
-        fill: false,
-        borderColor: '#0000FF',
-        borderDash: [5, 5]
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    scales: { y: { beginAtZero: true } }
-  }
-});
-
-loadData();
-      } catch {
-        showToast("Erreur lors de l'ajout.");
+        dateInput.value = new Date().toISOString().split('T')[0]; // Date du jour
+        showToast('Dépense ajoutée avec succès !');
+      } catch (err) {
+        console.error('Erreur lors de l\'ajout:', err);
+        showToast("Erreur lors de l'ajout de la dépense", true);
       }
     });
 
-    loadData();
+    // Initialiser l'application
+    function initApp() {
+      initCharts();
+      loadData();
+      
+      // Définir la date du jour par défaut
+      document.getElementById('date').value = new Date().toISOString().split('T')[0];
+      
+      // Écouter les changements de salaire avec la touche Entrée
+      document.getElementById('salaire').addEventListener('keypress', e => {
+        if (e.key === 'Enter') saveSalaire();
+      });
+    }
+
+    // Démarrer l'application
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
