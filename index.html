@@ -1,692 +1,661 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Budget Familial</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .toast {
-      position: fixed;
-      bottom: 1rem;
-      right: 1rem;
-      background-color: #4ECDC4;
-      color: #292F36;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      z-index: 9999;
-      display: none;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .error-message {
-      color: #FF331F;
-      font-size: 0.875rem;
-      margin-top: 4px;
-    }
-    .progress-bar {
-      transition: width 0.5s ease-in-out;
-    }
-    .category-icon {
-      width: 24px;
-      height: 24px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 8px;
-    }
-    .smooth-transition {
-      transition: all 0.3s ease;
-    }
-    /* Empêche le décalage lors du chargement */
-    html {
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-    }
-    body {
-      overflow-anchor: none; /* Désactive l'ancrage de défilement */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelance Marketing Digital | Votre Nom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .stats-item {
+            transition: all 0.3s ease;
+        }
+        .stats-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
-  <div class="max-w-5xl mx-auto p-4 md:p-6">
-    <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-indigo-800 mb-2">💰 Suivi Budget Familial</h1>
-      <p class="text-lg text-indigo-600">Gérez vos finances mensuelles en toute simplicité</p>
-    </header>
-
-    <div id="toast" class="toast"></div>
-
-    <!-- Section Salaire -->
-    <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 p-6 rounded-xl shadow-lg mb-8 text-white">
-      <div class="flex items-center mb-4">
-        <i class="fas fa-money-bill-wave text-2xl mr-3"></i>
-        <h2 class="text-xl font-semibold">Salaire du foyer</h2>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label for="salaire" class="block mb-2 font-medium">Montant (€)</label>
-          <input type="number" id="salaire" class="w-full p-3 rounded-lg bg-indigo-500 bg-opacity-20 text-white placeholder-indigo-200 border border-indigo-400 focus:outline-none focus:ring-2 focus:ring-white" placeholder="Salaire total">
-        </div>
-        <div class="flex items-end">
-          <button onclick="saveSalaire()" class="w-full bg-white hover:bg-indigo-100 text-indigo-800 font-semibold py-3 px-4 rounded-lg smooth-transition">
-            <i class="fas fa-save mr-2"></i>Enregistrer
-          </button>
-        </div>
-        <div class="bg-indigo-500 bg-opacity-30 p-4 rounded-lg">
-          <p class="text-sm font-medium mb-1">Reste après dépenses</p>
-          <p id="resteAffiche" class="text-2xl font-bold">€0.00</p>
-          <div class="w-full h-3 bg-indigo-400 bg-opacity-40 rounded-full mt-2 overflow-hidden">
-            <div id="resteBarre" class="h-full bg-white progress-bar" style="width: 100%"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Formulaire de dépense -->
-    <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
-      <div class="flex items-center mb-4">
-        <i class="fas fa-plus-circle text-2xl text-indigo-600 mr-3"></i>
-        <h2 class="text-xl font-semibold text-indigo-800">Ajouter une dépense</h2>
-      </div>
-      <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div>
-          <label for="date" class="block mb-2 font-medium text-gray-700">Date</label>
-          <input type="date" id="date" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-        </div>
-        <div>
-          <label for="amount" class="block mb-2 font-medium text-gray-700">Montant (€)</label>
-          <input type="number" step="0.01" id="amount" placeholder="0.00" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-        </div>
-        <div>
-          <label for="category" class="block mb-2 font-medium text-gray-700">Catégorie</label>
-          <select id="category" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" required>
-            <option value="">-- Sélectionnez --</option>
-            <option value="Logement">🏠 Logement</option>
-            <option value="Alimentation">🛒 Alimentation</option>
-            <option value="Transport">🚌 Transport</option>
-            <option value="Santé">💊 Santé</option>
-            <option value="Loisirs">🎮 Loisirs</option>
-            <option value="Abonnements">💻 Abonnements</option>
-            <option value="Éducation">📚 Éducation</option>
-            <option value="Autres">🔧 Autres</option>
-          </select>
-        </div>
-        <div>
-          <label for="description" class="block mb-2 font-medium text-gray-700">Description</label>
-          <input type="text" id="description" placeholder="Détails" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-        </div>
-        <div class="flex items-end">
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg smooth-transition">
-            <i class="fas fa-plus mr-2"></i>Ajouter
-          </button>
-        </div>
-        <p id="formError" class="error-message hidden col-span-full">Veuillez remplir tous les champs obligatoires.</p>
-      </form>
-    </div>
-
-    <!-- Statistiques -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <div class="bg-white p-4 rounded-xl shadow flex items-start">
-        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
-          <i class="fas fa-chart-pie text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-sm font-medium text-gray-500">Total dépenses</h3>
-          <p id="monthExpenses" class="text-2xl font-bold text-indigo-800">€0.00</p>
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow flex items-start">
-        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
-          <i class="fas fa-calculator text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-sm font-medium text-gray-500">Moyenne / Mois</h3>
-          <p id="averageExpenses" class="text-2xl font-bold text-indigo-800">€0.00</p>
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow flex items-start">
-        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
-          <i class="fas fa-exclamation-triangle text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-sm font-medium text-gray-500">Dépense Max</h3>
-          <p id="maxExpense" class="text-2xl font-bold text-indigo-800">€0.00</p>
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow flex items-start">
-        <div class="bg-indigo-100 p-3 rounded-lg mr-4 text-indigo-600">
-          <i class="fas fa-trophy text-xl"></i>
-        </div>
-        <div>
-          <h3 class="text-sm font-medium text-gray-500">Catégorie N°1</h3>
-          <p id="topCategory" class="text-2xl font-bold text-indigo-800">-</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Graphiques -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      <div class="bg-white p-6 rounded-xl shadow">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-chart-pie text-xl text-indigo-600 mr-3"></i>
-          <h2 class="text-xl font-semibold text-indigo-800">Répartition par catégorie</h2>
-        </div>
-        <canvas id="expensesChart" class="w-full" height="300"></canvas>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow">
-        <div class="flex items-center mb-4">
-          <i class="fas fa-chart-line text-xl text-indigo-600 mr-3"></i>
-          <h2 class="text-xl font-semibold text-indigo-800">Évolution mensuelle</h2>
-        </div>
-        <canvas id="monthlyTrendChart" class="w-full" height="300"></canvas>
-      </div>
-    </div>
-
-    <!-- Historique des dépenses -->
-    <div class="bg-white p-6 rounded-xl shadow">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center">
-          <i class="fas fa-history text-xl text-indigo-600 mr-3"></i>
-          <h2 class="text-xl font-semibold text-indigo-800">Historique des dépenses</h2>
-        </div>
-        <div class="relative">
-          <select id="filterMonth" class="appearance-none bg-indigo-50 border border-indigo-200 text-indigo-800 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
-            <option value="">Tous les mois</option>
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-indigo-600">
-            <i class="fas fa-chevron-down text-sm"></i>
-          </div>
-        </div>
-      </div>
-      <div id="expenseHistory" class="space-y-3"></div>
-    </div>
-  </div>
-
-  <script>
-    // Configuration de Tailwind
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            indigo: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              200: '#c7d2fe',
-              300: '#a5b4fc',
-              400: '#818cf8',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              800: '#3730a3',
-              900: '#312e81',
-            }
-          }
-        }
-      }
-    }
-
-    const API_URL = 'https://sheetdb.io/api/v1/giny608orux62';
-    let allData = [];
-    let expensesChart, monthlyTrendChart;
-
-    // Initialisation des graphiques
-    function initCharts() {
-      // Graphique en camembert
-      const expensesCtx = document.getElementById('expensesChart').getContext('2d');
-      expensesChart = new Chart(expensesCtx, {
-        type: 'doughnut',
-        data: {
-          labels: [],
-          datasets: [{
-            data: [],
-            backgroundColor: [
-              '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899',
-              '#f43f5e', '#ff4d4f', '#ff6b6b', '#f97316', '#f59e0b'
-            ],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 20,
-                usePointStyle: true,
-                pointStyle: 'circle'
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  const label = context.label || '';
-                  const value = context.raw || 0;
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = Math.round((value / total) * 100);
-                  return `${label}: €${value.toFixed(2)} (${percentage}%)`;
-                }
-              }
-            }
-          },
-          cutout: '70%'
-        }
-      });
-
-      // Graphique d'évolution mensuelle
-      const monthlyCtx = document.getElementById('monthlyTrendChart').getContext('2d');
-      monthlyTrendChart = new Chart(monthlyCtx, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [
-            {
-              label: 'Dépenses',
-              data: [],
-              fill: false,
-              borderColor: '#6366f1',
-              backgroundColor: '#6366f1',
-              tension: 0.3,
-              borderWidth: 3,
-              pointBackgroundColor: '#6366f1',
-              pointRadius: 5,
-              pointHoverRadius: 7
-            },
-            {
-              label: 'Salaire',
-              data: [],
-              fill: false,
-              borderColor: '#10b981',
-              backgroundColor: '#10b981',
-              borderDash: [5, 5],
-              borderWidth: 2,
-              pointBackgroundColor: '#10b981',
-              pointRadius: 3,
-              pointHoverRadius: 5
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 20,
-                usePointStyle: true
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.dataset.label}: €${context.raw.toFixed(2)}`;
-                }
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return '€' + value;
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
-    // Afficher une notification
-    function showToast(msg, isError = false) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.backgroundColor = isError ? '#ef4444' : '#4ECDC4';
-      toast.style.display = 'block';
-      
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => {
-          toast.style.display = 'none';
-          toast.style.opacity = '1';
-        }, 300);
-      }, 3000);
-    }
-
-    // Enregistrer le salaire
-    function saveSalaire() {
-      const salaireInput = document.getElementById('salaire');
-      const salaire = parseFloat(salaireInput.value);
-      
-      if (!isNaN(salaire) && salaire > 0) {
-        localStorage.setItem('salaire', salaire);
-        showToast('Salaire enregistré avec succès !');
-        updateUI(allData);
-      } else {
-        showToast('Veuillez entrer un montant valide', true);
-        salaireInput.focus();
-      }
-    }
-
-    // Charger les données depuis l'API
-    async function loadData() {
-      try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error('Erreur réseau');
-        
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error('Format de données invalide');
-        
-        allData = data.map(item => ({
-          ...item,
-          date: item.date || new Date().toISOString().split('T')[0],
-          montant: parseFloat(item.montant || 0),
-          categorie: item.categorie || 'Autres',
-          description: item.description || ''
-        }));
-        
-        updateUI(allData);
-        updateMonthFilter();
-      } catch (err) {
-        console.error('Erreur de chargement des données:', err);
-        showToast("Erreur de chargement des données", true);
-        
-        // Exemple de données par défaut si l'API échoue
-        if (allData.length === 0) {
-          const defaultDate = new Date().toISOString().split('T')[0];
-          allData = [
-            { id: '1', date: defaultDate, montant: 1200, categorie: 'Logement', description: 'Loyer' },
-            { id: '2', date: defaultDate, montant: 350, categorie: 'Alimentation', description: 'Courses' },
-            { id: '3', date: defaultDate, montant: 80, categorie: 'Transport', description: 'Essence' }
-          ];
-          updateUI(allData);
-          updateMonthFilter();
-        }
-      }
-    }
-
-    // Mettre à jour le filtre des mois
-    function updateMonthFilter() {
-      const monthFilter = document.getElementById('filterMonth');
-      const months = new Set();
-      
-      allData.forEach(item => {
-        if (item.date) {
-          const [year, month] = item.date.split('-');
-          months.add(`${year}-${month}`);
-        }
-      });
-      
-      // Vider et remplir les options
-      monthFilter.innerHTML = '<option value="">Tous les mois</option>';
-      const sortedMonths = Array.from(months).sort();
-      
-      sortedMonths.forEach(month => {
-        const [year, monthNum] = month.split('-');
-        const monthName = new Date(year, monthNum - 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-        monthFilter.innerHTML += `<option value="${month}">${monthName}</option>`;
-      });
-      
-      // Écouter les changements de filtre
-      monthFilter.addEventListener('change', function() {
-        const selectedMonth = this.value;
-        const filteredData = selectedMonth 
-          ? allData.filter(item => item.date && item.date.startsWith(selectedMonth))
-          : allData;
-        updateUI(filteredData);
-      });
-    }
-
-    // Mettre à jour l'interface utilisateur
-    function updateUI(data) {
-      // Sauvegarder la position de défilement avant la mise à jour
-      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-      
-      const salaire = parseFloat(localStorage.getItem('salaire')) || 0;
-      document.getElementById('salaire').value = salaire || '';
-      
-      // Calculer les statistiques
-      const total = data.reduce((sum, d) => sum + (d.montant || 0), 0);
-      const reste = salaire - total;
-      
-      // Mettre à jour les indicateurs
-      document.getElementById('monthExpenses').textContent = `€${total.toFixed(2)}`;
-      document.getElementById('resteAffiche').textContent = `€${Math.max(reste, 0).toFixed(2)}`;
-      document.getElementById('resteAffiche').className = reste >= 0 
-        ? 'text-2xl font-bold text-green-600' 
-        : 'text-2xl font-bold text-red-600';
-      
-      // Mettre à jour la barre de progression
-      const progressWidth = salaire > 0 ? Math.min((reste / salaire) * 100, 100) : 100;
-      document.getElementById('resteBarre').style.width = `${Math.max(progressWidth, 0)}%`;
-      document.getElementById('resteBarre').className = reste >= 0 
-        ? 'h-full bg-green-500 progress-bar' 
-        : 'h-full bg-red-500 progress-bar';
-      
-      // Calculer les statistiques avancées
-      const monthlyData = {};
-      const categories = {};
-      let maxExpense = 0;
-      
-      data.forEach(d => {
-        // Groupement par mois
-        const month = d.date?.substring(0, 7);
-        if (month) {
-          monthlyData[month] = (monthlyData[month] || 0) + (d.montant || 0);
-        }
-        
-        // Groupement par catégorie
-        categories[d.categorie] = (categories[d.categorie] || 0) + (d.montant || 0);
-        
-        // Dépense maximale
-        if ((d.montant || 0) > maxExpense) {
-          maxExpense = d.montant;
-        }
-      });
-      
-      // Mettre à jour les autres indicateurs
-      const monthCount = Object.keys(monthlyData).length || 1;
-      document.getElementById('averageExpenses').textContent = `€${(total / monthCount).toFixed(2)}`;
-      document.getElementById('maxExpense').textContent = `€${maxExpense.toFixed(2)}`;
-      
-      // Trouver la catégorie principale
-      const topCategory = Object.entries(categories).sort((a, b) => b[1] - a[1])[0];
-      document.getElementById('topCategory').textContent = topCategory ? topCategory[0] : '-';
-      
-      // Mettre à jour les graphiques
-      updateCharts(categories, monthlyData, salaire);
-      
-      // Mettre à jour l'historique
-      updateExpenseHistory(data);
-      
-      // Restaurer la position de défilement après la mise à jour
-      window.requestAnimationFrame(() => {
-        window.scrollTo(0, scrollPosition);
-      });
-    }
-
-    // Mettre à jour les graphiques
-    function updateCharts(categories, monthlyData, salaire) {
-      // Graphique des catégories
-      expensesChart.data.labels = Object.keys(categories);
-      expensesChart.data.datasets[0].data = Object.values(categories);
-      expensesChart.update();
-      
-      // Graphique d'évolution mensuelle
-      const sortedMonths = Object.keys(monthlyData).sort();
-      monthlyTrendChart.data.labels = sortedMonths;
-      monthlyTrendChart.data.datasets[0].data = sortedMonths.map(month => monthlyData[month]);
-      monthlyTrendChart.data.datasets[1].data = sortedMonths.map(() => salaire);
-      monthlyTrendChart.update();
-    }
-
-    // Mettre à jour l'historique des dépenses
-    function updateExpenseHistory(data) {
-      const historyContainer = document.getElementById('expenseHistory');
-      historyContainer.innerHTML = '';
-      
-      if (data.length === 0) {
-        historyContainer.innerHTML = `
-          <div class="bg-gray-50 p-6 rounded-lg text-center text-gray-500">
-            <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
-            <p>Aucune dépense enregistrée</p>
-          </div>
-        `;
-        return;
-      }
-      
-      // Trier par date (plus récent en premier)
-      const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
-      
-      sortedData.forEach(expense => {
-        const expenseElement = document.createElement('div');
-        expenseElement.className = 'bg-gray-50 hover:bg-gray-100 p-4 rounded-lg flex justify-between items-center smooth-transition';
-        
-        // Icône de catégorie
-        let categoryIcon = 'fa-tag';
-        switch(expense.categorie) {
-          case 'Logement': categoryIcon = 'fa-home'; break;
-          case 'Alimentation': categoryIcon = 'fa-shopping-basket'; break;
-          case 'Transport': categoryIcon = 'fa-car'; break;
-          case 'Santé': categoryIcon = 'fa-heartbeat'; break;
-          case 'Loisirs': categoryIcon = 'fa-gamepad'; break;
-          case 'Abonnements': categoryIcon = 'fa-tv'; break;
-          case 'Éducation': categoryIcon = 'fa-book'; break;
-        }
-        
-        // Formatage de la date
-        const formattedDate = expense.date 
-          ? new Date(expense.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
-          : 'Date inconnue';
-        
-        expenseElement.innerHTML = `
-          <div class="flex items-center">
-            <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-3">
-              <i class="fas ${categoryIcon}"></i>
+<body class="font-sans antialiased text-gray-800">
+    <!-- Navigation -->
+    <nav class="bg-indigo-900 text-white shadow-lg fixed w-full z-10">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <i class="fas fa-chart-line text-2xl text-indigo-300"></i>
+                <span class="font-bold text-xl">VotreNom</span>
             </div>
-            <div>
-              <p class="font-medium text-gray-800">${expense.categorie || 'Autres'}</p>
-              <p class="text-sm text-gray-500">
-                ${formattedDate}${expense.description ? ' · ' + expense.description : ''}
-              </p>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="nav-link">Accueil</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#portfolio" class="nav-link">Réalisations</a>
+                <a href="#stats" class="nav-link">Performances</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <a href="#cv" class="bg-white text-indigo-900 px-4 py-2 rounded-md font-medium hover:bg-indigo-100 transition duration-300">Télécharger CV</a>
             </div>
-          </div>
-          <div class="flex items-center">
-            <span class="text-red-600 font-bold mr-3">-€${(expense.montant || 0).toFixed(2)}</span>
-            <button onclick="deleteExpense('${expense.id}')" class="text-gray-400 hover:text-red-500 smooth-transition">
-              <i class="fas fa-trash-alt"></i>
+            <button class="md:hidden focus:outline-none" id="menu-btn">
+                <i class="fas fa-bars text-xl"></i>
             </button>
-          </div>
-        `;
-        
-        historyContainer.appendChild(expenseElement);
-      });
-    }
+        </div>
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden bg-indigo-800 w-full px-6 py-4" id="mobile-menu">
+            <div class="flex flex-col space-y-4">
+                <a href="#home" class="block hover:text-indigo-200">Accueil</a>
+                <a href="#services" class="block hover:text-indigo-200">Services</a>
+                <a href="#portfolio" class="block hover:text-indigo-200">Réalisations</a>
+                <a href="#stats" class="block hover:text-indigo-200">Performances</a>
+                <a href="#contact" class="block hover:text-indigo-200">Contact</a>
+                <a href="#cv" class="block bg-white text-indigo-900 px-4 py-2 rounded-md font-medium text-center">Télécharger CV</a>
+            </div>
+        </div>
+    </nav>
 
-    // Supprimer une dépense
-    async function deleteExpense(id) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer cette dépense ?')) return;
-      
-      try {
-        // En production, on utiliserait l'API
-        // await fetch(`${API_URL}/id/${id}`, { method: 'DELETE' });
-        
-        // Pour la démo, on filtre simplement les données locales
-        allData = allData.filter(item => item.id !== id);
-        updateUI(allData);
-        updateMonthFilter();
-        showToast('Dépense supprimée avec succès');
-      } catch (e) {
-        console.error('Erreur lors de la suppression:', e);
-        showToast("Erreur lors de la suppression", true);
-      }
-    }
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient text-white pt-24 pb-16 md:pt-32 md:pb-24">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">Boostez votre présence digitale</h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90">Stratégies marketing sur mesure pour propulser votre business en ligne.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#contact" class="bg-white text-indigo-900 px-6 py-3 rounded-md font-bold text-center hover:bg-indigo-100 transition duration-300">Discutons de votre projet</a>
+                    <a href="#services" class="border-2 border-white px-6 py-3 rounded-md font-bold text-center hover:bg-white hover:text-indigo-900 transition duration-300">Voir mes services</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Marketing Digital" class="rounded-lg shadow-2xl w-full max-w-md animate-float">
+            </div>
+        </div>
+    </section>
 
-    // Ajouter une dépense
-    document.getElementById('expenseForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      
-      // Récupérer les valeurs du formulaire
-      const dateInput = document.getElementById('date');
-      const amountInput = document.getElementById('amount');
-      const categoryInput = document.getElementById('category');
-      const descriptionInput = document.getElementById('description');
-      
-      const date = dateInput.value;
-      const amount = parseFloat(amountInput.value);
-      const category = categoryInput.value;
-      const description = descriptionInput.value;
-      
-      // Validation
-      const formError = document.getElementById('formError');
-      if (!date || isNaN(amount) || amount <= 0 || !category) {
-        formError.textContent = !date ? 'La date est requise' : 
-                              isNaN(amount) || amount <= 0 ? 'Montant invalide' : 
-                              'La catégorie est requise';
-        formError.classList.remove('hidden');
-        return;
-      }
-      
-      formError.classList.add('hidden');
-      
-      // Créer l'objet dépense
-      const newExpense = {
-        id: Date.now().toString(),
-        date,
-        montant: amount,
-        categorie: category,
-        description: description || ''
-      };
-      
-      try {
-        // En production, on enverrait à l'API
-        // await fetch(API_URL, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ data: newExpense })
-        // });
-        
-        // Pour la démo, on ajoute simplement aux données locales
-        allData.push(newExpense);
-        updateUI(allData);
-        updateMonthFilter();
-        
-        // Réinitialiser le formulaire
-        e.target.reset();
-        dateInput.value = new Date().toISOString().split('T')[0]; // Date du jour
-        showToast('Dépense ajoutée avec succès !');
-      } catch (err) {
-        console.error('Erreur lors de l\'ajout:', err);
-        showToast("Erreur lors de l'ajout de la dépense", true);
-      }
-    });
+    <!-- Services Section -->
+    <section id="services" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Services</h2>
+                <div class="w-20 h-1 bg-indigo-600 mx-auto mb-6"></div>
+                <p class="max-w-2xl mx-auto text-lg text-gray-600">Des solutions digitales complètes pour répondre à tous vos besoins marketing.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover transition duration-300">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-bullseye text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Stratégie Marketing</h3>
+                    <p class="text-gray-600 mb-4">Élaboration d'une stratégie digitale sur mesure pour atteindre vos objectifs business.</p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Audit complet</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Plan d'action détaillé</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> KPI de performance</li>
+                    </ul>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover transition duration-300">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-ad text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Publicité en Ligne</h3>
+                    <p class="text-gray-600 mb-4">Campagnes publicitaires performantes sur Google Ads, Facebook Ads et réseaux sociaux.</p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Ciblage précis</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Optimisation continue</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> ROI maximisé</li>
+                    </ul>
+                </div>
+                
+                <!-- Service 3 -->
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover transition duration-300">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-search-dollar text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">SEO & Content</h3>
+                    <p class="text-gray-600 mb-4">Optimisation pour les moteurs de recherche et création de contenu engageant.</p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Recherche de mots-clés</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Stratégie éditoriale</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Netlinking</li>
+                    </ul>
+                </div>
+                
+                <!-- Service 4 -->
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover transition duration-300">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-chart-pie text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Analyse & Reporting</h3>
+                    <p class="text-gray-600 mb-4">Suivi précis des performances et recommandations d'optimisation.</p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Tableaux de bord</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Analyses approfondies</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Rapports mensuels</li>
+                    </ul>
+                </div>
+                
+                <!-- Service 5 -->
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover transition duration-300">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-envelope-open-text text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Email Marketing</h3>
+                    <p class="text-gray-600 mb-4">Campagnes emailing performantes pour fidéliser et convertir vos clients.</p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Automatisation</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Personnalisation</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> A/B Testing</li>
+                    </ul>
+                </div>
+                
+                <!-- Service 6 -->
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover transition duration-300">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-users text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Réseaux Sociaux</h3>
+                    <p class="text-gray-600 mb-4">Gestion et animation de vos communautés sur les principales plateformes sociales.</p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Stratégie de contenu</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Community management</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Publicités sociales</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Initialiser l'application
-    function initApp() {
-      initCharts();
-      loadData();
-      
-      // Définir la date du jour par défaut
-      document.getElementById('date').value = new Date().toISOString().split('T')[0];
-      
-      // Écouter les changements de salaire avec la touche Entrée
-      document.getElementById('salaire').addEventListener('keypress', e => {
-        if (e.key === 'Enter') saveSalaire();
-      });
-    }
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Réalisations</h2>
+                <div class="w-20 h-1 bg-indigo-600 mx-auto mb-6"></div>
+                <p class="max-w-2xl mx-auto text-lg text-gray-600">Découvrez quelques-uns de mes projets récents et les résultats obtenus.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-lg card-hover transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1415&q=80" alt="Projet E-commerce" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Boutique E-commerce</h3>
+                        <p class="text-gray-600 mb-4">Stratégie marketing complète pour une boutique en ligne de produits artisanaux.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">SEO</span>
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Facebook Ads</span>
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Email Marketing</span>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">Augmentation du CA:</span>
+                                <span class="font-bold text-green-600">+320%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">ROI publicitaire:</span>
+                                <span class="font-bold text-green-600">5.8x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-lg card-hover transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1636&q=80" alt="Projet SaaS" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Application SaaS B2B</h3>
+                        <p class="text-gray-600 mb-4">Campagne de lead generation pour une solution logicielle professionnelle.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">LinkedIn Ads</span>
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Content Marketing</span>
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Webinars</span>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">Leads générés:</span>
+                                <span class="font-bold text-green-600">1,250+</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Coût par lead:</span>
+                                <span class="font-bold text-green-600">€18.50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 3 -->
+                <div class="bg-white rounded-lg overflow-hidden shadow-lg card-hover transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Projet Restaurant" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Restaurant Gastronomique</h3>
+                        <p class="text-gray-600 mb-4">Stratégie digitale pour augmenter la notoriété et les réservations en ligne.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Instagram</span>
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Google My Business</span>
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Influenceurs</span>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">Réservations en ligne:</span>
+                                <span class="font-bold text-green-600">+175%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Engagement Instagram:</span>
+                                <span class="font-bold text-green-600">+420%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="#" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md font-bold hover:bg-indigo-700 transition duration-300">
+                    Voir plus de réalisations <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
 
-    // Démarrer l'application
-    document.addEventListener('DOMContentLoaded', initApp);
-  </script>
+    <!-- Stats Section -->
+    <section id="stats" class="py-16 bg-indigo-900 text-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Performances</h2>
+                <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
+                <p class="max-w-2xl mx-auto text-lg text-indigo-200">Des résultats concrets pour mes clients grâce à des stratégies data-driven.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Stat 1 -->
+                <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
+                    <div class="text-5xl font-bold mb-2">150+</div>
+                    <div class="text-xl font-medium">Projets réalisés</div>
+                    <div class="mt-4 text-indigo-300">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                </div>
+                
+                <!-- Stat 2 -->
+                <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
+                    <div class="text-5xl font-bold mb-2">12M€</div>
+                    <div class="text-xl font-medium">CA généré</div>
+                    <div class="mt-4 text-indigo-300">
+                        <i class="fas fa-euro-sign text-2xl"></i>
+                    </div>
+                </div>
+                
+                <!-- Stat 3 -->
+                <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
+                    <div class="text-5xl font-bold mb-2">5.2x</div>
+                    <div class="text-xl font-medium">ROI moyen</div>
+                    <div class="mt-4 text-indigo-300">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                </div>
+                
+                <!-- Stat 4 -->
+                <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
+                    <div class="text-5xl font-bold mb-2">98%</div>
+                    <div class="text-xl font-medium">Clients satisfaits</div>
+                    <div class="mt-4 text-indigo-300">
+                        <i class="fas fa-smile text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 bg-white bg-opacity-10 rounded-xl p-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">Témoignages clients</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-indigo-800 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center">
+                                <i class="fas fa-user text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="font-bold">Marie D.</div>
+                                <div class="text-indigo-300">Directrice Marketing</div>
+                            </div>
+                        </div>
+                        <p class="text-indigo-100 italic">"Grâce à la stratégie digitale mise en place, nous avons multiplié notre trafic par 5 en seulement 6 mois. Un professionnel à l'écoute et très réactif."</p>
+                        <div class="mt-4 text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="bg-indigo-800 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center">
+                                <i class="fas fa-user text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="font-bold">Thomas L.</div>
+                                <div class="text-indigo-300">CEO Startup</div>
+                            </div>
+                        </div>
+                        <p class="text-indigo-100 italic">"Notre campagne Facebook Ads a été optimisée avec une précision remarquable. Résultat: un coût d'acquisition divisé par 3 tout en augmentant le volume de ventes."</p>
+                        <div class="mt-4 text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CV Download Section -->
+    <section id="cv" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2 bg-indigo-600 text-white p-8 md:p-12 flex flex-col justify-center">
+                        <h2 class="text-3xl font-bold mb-4">Mon Curriculum Vitae</h2>
+                        <p class="mb-6 text-indigo-100">Téléchargez mon CV complet pour découvrir mon parcours, mes compétences et mes certifications en marketing digital.</p>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-graduation-cap mr-3 text-xl"></i>
+                                <span>Master en Marketing Digital - Paris Dauphine</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-certificate mr-3 text-xl"></i>
+                                <span>Certifications Google Ads, Facebook Blueprint, HubSpot</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-briefcase mr-3 text-xl"></i>
+                                <span>8 ans d'expérience en agence et freelance</span>
+                            </div>
+                        </div>
+                        <button id="download-btn" class="bg-white text-indigo-900 px-6 py-3 rounded-md font-bold hover:bg-indigo-100 transition duration-300 w-full md:w-auto">
+                            <i class="fas fa-download mr-2"></i> Télécharger mon CV
+                        </button>
+                    </div>
+                    <div class="md:w-1/2 p-8 md:p-12 flex items-center justify-center">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="CV" class="w-full max-w-xs rounded-lg shadow-xl">
+                            <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-md">
+                                <i class="fas fa-file-pdf text-4xl text-red-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Contactez-moi</h2>
+                <div class="w-20 h-1 bg-indigo-600 mx-auto mb-6"></div>
+                <p class="max-w-2xl mx-auto text-lg text-gray-600">Prêt à booster votre présence digitale? Discutons de votre projet.</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2 p-8 md:p-12 bg-gray-50">
+                        <h3 class="text-2xl font-bold mb-6">Informations de contact</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-envelope text-indigo-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">Email</h4>
+                                    <p class="text-gray-600">contact@votrenom.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-phone-alt text-indigo-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">Téléphone</h4>
+                                    <p class="text-gray-600">+33 6 12 34 56 78</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-map-marker-alt text-indigo-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">Localisation</h4>
+                                    <p class="text-gray-600">Paris, France</p>
+                                    <p class="text-gray-600">Disponible pour des missions en remote</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h4 class="font-bold mb-4">Suivez-moi</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="bg-indigo-100 text-indigo-600 p-3 rounded-full hover:bg-indigo-200 transition duration-300">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="bg-indigo-100 text-indigo-600 p-3 rounded-full hover:bg-indigo-200 transition duration-300">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="bg-indigo-100 text-indigo-600 p-3 rounded-full hover:bg-indigo-200 transition duration-300">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-indigo-100 text-indigo-600 p-3 rounded-full hover:bg-indigo-200 transition duration-300">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 p-8 md:p-12">
+                        <h3 class="text-2xl font-bold mb-6">Envoyez un message</h3>
+                        <form id="contact-form" class="space-y-4">
+                            <div>
+                                <label for="name" class="block font-medium mb-1">Nom complet</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label for="email" class="block font-medium mb-1">Email</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label for="subject" class="block font-medium mb-1">Sujet</label>
+                                <input type="text" id="subject" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label for="message" class="block font-medium mb-1">Message</label>
+                                <textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-md font-bold hover:bg-indigo-700 transition duration-300 w-full">
+                                Envoyer le message <i class="fas fa-paper-plane ml-2"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-chart-line text-2xl text-indigo-400"></i>
+                        <span class="font-bold text-xl">VotreNom</span>
+                    </div>
+                    <p class="text-gray-400">Expert en marketing digital freelance. Stratégies sur mesure pour booster votre business en ligne.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Services</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition duration-300">Stratégie Marketing</a></li>
+                        <li><a href="#" class="hover:text-white transition duration-300">Publicité en Ligne</a></li>
+                        <li><a href="#" class="hover:text-white transition duration-300">SEO & Content</a></li>
+                        <li><a href="#" class="hover:text-white transition duration-300">Réseaux Sociaux</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Liens utiles</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#home" class="hover:text-white transition duration-300">Accueil</a></li>
+                        <li><a href="#services" class="hover:text-white transition duration-300">Services</a></li>
+                        <li><a href="#portfolio" class="hover:text-white transition duration-300">Réalisations</a></li>
+                        <li><a href="#contact" class="hover:text-white transition duration-300">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Newsletter</h4>
+                    <p class="text-gray-400 mb-4">Abonnez-vous pour recevoir des conseils marketing exclusifs.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Votre email" class="px-4 py-2 rounded-l-md focus:outline-none text-gray-900 w-full">
+                        <button type="submit" class="bg-indigo-600 px-4 py-2 rounded-r-md hover:bg-indigo-700 transition duration-300">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">© 2023 VotreNom. Tous droits réservés.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-300">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Download CV button
+        const downloadBtn = document.getElementById('download-btn');
+        downloadBtn.addEventListener('click', () => {
+            // In a real scenario, this would link to your actual CV file
+            alert('Téléchargement du CV en cours...');
+            // window.location.href = 'path-to-your-cv.pdf';
+        });
+
+        // Contact form submission
+        const contactForm = document.getElementById('contact-form');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            // Here you would typically send the data to a server
+            console.log({ name, email, subject, message });
+            
+            // Show success message
+            alert(`Merci ${name}, votre message a été envoyé avec succès! Je vous répondrai dès que possible.`);
+            
+            // Reset form
+            contactForm.reset();
+        });
+
+        // Animation on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.card-hover, .stats-item');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if (elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        // Set initial state for animated elements
+        document.querySelectorAll('.card-hover, .stats-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+        });
+
+        // Run on load and scroll
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
 </body>
 </html>
