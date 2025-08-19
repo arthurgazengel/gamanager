@@ -113,57 +113,73 @@ Selon vos besoins, je peux intervenir comme chargé de marketing digital, chef d
     </section>
     <!-- Compétences Section -->
     <section id="stats" class="py-16 bg-indigo-900 text-white">
-  <div class="container mx-auto px-6">
+<div class="container mx-auto px-6">
   <div class="text-center mb-16">
     <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Compétences</h2>
     <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
     <p class="max-w-2xl mx-auto text-lg text-indigo-200">Compétences transverses pour accompagner vos projets</p>
   </div>
 
-  <div x-data="{ open: false }" class="max-w-xl mx-auto bg-indigo-900 text-white p-6 rounded-2xl shadow-md">
-    <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
-      Stratégie marketing & digitale
-      <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-      </svg>
-    </button>
-
-    <div x-show="open" x-transition class="mt-4 text-indigo-200">
-      Élaboration de plans de communication, acquisition & B2B/B2C
+  <div class="grid gap-6 max-w-3xl mx-auto">
+    
+    <!-- Bloc 1 -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
+        Stratégie marketing & digitale
+        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200">
+        Élaboration de plans de communication, acquisition & B2B/B2C
+      </div>
     </div>
+
+    <!-- Bloc 2 -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
+        Gestion de projet & accompagnement clients
+        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200">
+        Coordination de missions, suivi client, valorisation des artisans et PME
+      </div>
+    </div>
+
+    <!-- Bloc 3 -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
+        Communication & création de contenus
+        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200">
+        Community management, rédaction, design visuel (Canva, InDesign, Photoshop)
+      </div>
+    </div>
+
+    <!-- Bloc 4 -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
+        Outils digitaux & analytics
+        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200">
+        Emailing (Mailchimp, Brevo), WordPress, SEO/SEA, Google Analytics, automatisation no-code
+      </div>
+    </div>
+
   </div>
 </div>
+
 <script src="//unpkg.com/alpinejs" defer></script>
-                
-                <!-- Stat 2 -->
-                <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
-                    <div class="text-2xl font-bold mb-2">Gestion de projet & accompagnement clients</div>
-                    <div class="text-xl font-medium">Coordination, suivi, mise en valeur d’artisans/PME</div>
-                    <div class="mt-4 text-indigo-300">
-                        <i class="fas fa-euro-sign text-2xl"></i>
-                    </div>
-                </div>
-                
-                <!-- Stat 3 -->
-                <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
-                    <div class="text-2xl font-bold mb-2">Communication & création de contenus</div>
-                    <div class="text-xl font-medium">Community management, rédaction, design</div>
-                    <div class="mt-4 text-indigo-300">
-                        <i class="fas fa-chart-line text-2xl"></i>
-                    </div>
-                </div>
-                
-                <!-- Stat 4 -->
-                <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
-                    <div class="text-2xl font-bold mb-2">Outils digitaux & analytics</div>
-                    <div class="text-xl font-medium">Logiciel E-mailing & CRM, Google Analytics, Looker Studio...</div>
-                    <div class="mt-4 text-indigo-300">
-                        <i class="fas fa-smile text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-            </section>
-    
+
+    </section>
     <!-- Services Section -->
     <section id="services" class="py-16 bg-gray-50">
         <div class="container mx-auto px-6">
