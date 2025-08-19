@@ -124,60 +124,94 @@ Selon vos besoins, je peux intervenir comme chargé de marketing digital, chef d
   <div class="grid gap-6 max-w-3xl mx-auto">
     
     <!-- Bloc 1 -->
-    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-4xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
-        Stratégie marketing & digitale
-        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2h6v2m-7 4h8a2 2 0 002-2v-6a2 2 0 00-2-2H8a2 2 0 00-2 2v6a2 2 0 002 2zM8 9h8m-8-4h8" />
+          </svg>
+          Stratégie marketing & digitale
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200">
-- Conception de plans de communication sur-mesure selon les objectifs et les cibles.
-          
-- Mise en place de stratégies d’acquisition pour générer leads, ventes ou partenariats.
-          
-- Adaptation des actions au B2B (prospection, LinkedIn, emailing) comme au B2C (réseaux sociaux, contenus engageants).
-          
-- Définition de calendriers éditoriaux et de lignes directrices claires pour assurer la cohérence des messages.
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Conception de plans de communication sur-mesure selon les objectifs et les cibles.</li>
+          <li>Mise en place de stratégies d’acquisition pour générer leads, ventes ou partenariats.</li>
+          <li>Adaptation des actions au B2B (prospection, LinkedIn, emailing) comme au B2C (réseaux sociaux, contenus engageants).</li>
+          <li>Définition de calendriers éditoriaux et de lignes directrices claires pour assurer la cohérence des messages.</li>
+        </ul>
       </div>
     </div>
 
     <!-- Bloc 2 -->
     <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
-        Gestion de projet & accompagnement clients
-        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4m6 6V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2z"/>
+          </svg>
+          Gestion de projet & accompagnement clients
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200">
-        Coordination de missions, suivi client, valorisation des artisans et PME
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Pilotage de missions marketing et communication de bout en bout.</li>
+          <li>Coordination des acteurs internes et externes (graphistes, imprimeurs, partenaires, etc.).</li>
+          <li>Suivi régulier avec les clients pour ajuster la stratégie selon leurs besoins et leurs résultats.</li>
+          <li>Accompagnement des artisans, PME et e-commerces pour développer leur notoriété locale et digitale.</li>
+        </ul>
       </div>
     </div>
 
     <!-- Bloc 3 -->
     <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
-        Communication & création de contenus
-        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h7m0 0v12m0-12H4v12h7V6z" />
+          </svg>
+          Communication & création de contenus
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200">
-        Community management, rédaction, design visuel (Canva, InDesign, Photoshop)
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Community management : animation de comptes LinkedIn, Instagram et Facebook.</li>
+          <li>Rédaction de contenus adaptés aux différentes cibles (posts réseaux, newsletters, brochures).</li>
+          <li>Création visuelle : réalisation de supports print & digitaux (Canva, InDesign, Photoshop).</li>
+          <li>Développement de campagnes social media avec un storytelling adapté pour engager et fidéliser les audiences.</li>
+        </ul>
       </div>
     </div>
 
     <!-- Bloc 4 -->
     <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
-        Outils digitaux & analytics
-        <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
+        <div class="flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2h6v2m-7 4h8a2 2 0 002-2v-6a2 2 0 00-2-2H8a2 2 0 00-2 2v6a2 2 0 002 2zM8 9h8m-8-4h8" />
+          </svg>
+          Outils digitaux & analytics
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
         </svg>
       </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200">
-        Emailing (Mailchimp, Brevo), WordPress, SEO/SEA, Google Analytics, automatisation no-code
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Email marketing : maîtrise de Mailchimp, Brevo (ex-Sendinblue), Klaviyo.</li>
+          <li>Web & no-code : WordPress, Tailwind, Chart.js, automatisations avec Sheety/SheetDB.</li>
+          <li>Référencement : bases solides en SEO et SEA (campagnes Facebook Ads / Google Ads).</li>
+          <li>Analyse & reporting : suivi des performances via Google Analytics, KPIs emailing (taux d’ouverture, CTR), et statistiques réseaux sociaux.</li>
+        </ul>
       </div>
     </div>
 
@@ -185,7 +219,6 @@ Selon vos besoins, je peux intervenir comme chargé de marketing digital, chef d
 </div>
 
 <script src="//unpkg.com/alpinejs" defer></script>
-
     </section>
     <!-- Services Section -->
     <section id="services" class="py-16 bg-gray-50">
