@@ -111,120 +111,12 @@ Selon vos besoins, je peux intervenir comme chargé de marketing digital, chef d
 </p>
             </div>
     </section>
-    
-    <!-- Compétences Section -->
-    <section id="stats" class="py-16 bg-indigo-900 text-white">
-<div class="container mx-auto px-6">
-  <div class="text-center mb-16">
-    <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Compétences</h2>
-    <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
-    <p class="max-w-2xl mx-auto text-lg text-indigo-200">Compétences transverses pour accompagner vos projets</p>
-  </div>
 
-  <div class="grid gap-6 max-w-3xl mx-auto">
-    
-    <!-- Bloc 1 -->
-    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
-        <div class="flex items-center gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2h6v2m-7 4h8a2 2 0 002-2v-6a2 2 0 00-2-2H8a2 2 0 00-2 2v6a2 2 0 002 2zM8 9h8m-8-4h8" />
-          </svg>
-          Stratégie marketing & digitale
-        </div>
-        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
-        <ul class="list-disc list-inside space-y-1">
-          <li>Conception de plans de communication sur-mesure selon les objectifs et les cibles.</li>
-          <li>Mise en place de stratégies d’acquisition pour générer leads, ventes ou partenariats.</li>
-          <li>Adaptation des actions au B2B (prospection, LinkedIn, emailing) comme au B2C (réseaux sociaux, contenus engageants).</li>
-          <li>Définition de calendriers éditoriaux et de lignes directrices claires pour assurer la cohérence des messages.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Bloc 2 -->
-    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
-        <div class="flex items-center gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4m6 6V6a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2z"/>
-          </svg>
-          Gestion de projet & accompagnement clients
-        </div>
-        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
-        <ul class="list-disc list-inside space-y-1">
-          <li>Pilotage de missions marketing et communication de bout en bout.</li>
-          <li>Coordination des acteurs internes et externes (graphistes, imprimeurs, partenaires, etc.).</li>
-          <li>Suivi régulier avec les clients pour ajuster la stratégie selon leurs besoins et leurs résultats.</li>
-          <li>Accompagnement des artisans, PME et e-commerces pour développer leur notoriété locale et digitale.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Bloc 3 -->
-    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
-        <div class="flex items-center gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M4 6h7m0 0v12m0-12H4v12h7V6z" />
-          </svg>
-          Communication & création de contenus
-        </div>
-        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
-        <ul class="list-disc list-inside space-y-1">
-          <li>Community management : animation de comptes LinkedIn, Instagram et Facebook.</li>
-          <li>Rédaction de contenus adaptés aux différentes cibles (posts réseaux, newsletters, brochures).</li>
-          <li>Création visuelle : réalisation de supports print & digitaux (Canva, InDesign, Photoshop).</li>
-          <li>Développement de campagnes social media avec un storytelling adapté pour engager et fidéliser les audiences.</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Bloc 4 -->
-    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
-      <button @click="open = !open" class="w-full flex justify-between items-center text-xl font-bold">
-        <div class="flex items-center gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2h6v2m-7 4h8a2 2 0 002-2v-6a2 2 0 00-2-2H8a2 2 0 00-2 2v6a2 2 0 002 2zM8 9h8m-8-4h8" />
-          </svg>
-          Outils digitaux & analytics
-        </div>
-        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-      </button>
-      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
-        <ul class="list-disc list-inside space-y-1">
-          <li>Email marketing : maîtrise de Mailchimp, Brevo (ex-Sendinblue), Klaviyo.</li>
-          <li>Web & no-code : WordPress, Tailwind, Chart.js, automatisations avec Sheety/SheetDB.</li>
-          <li>Référencement : bases solides en SEO et SEA (campagnes Facebook Ads / Google Ads).</li>
-          <li>Analyse & reporting : suivi des performances via Google Analytics, KPIs emailing (taux d’ouverture, CTR), et statistiques réseaux sociaux.</li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script src="//unpkg.com/alpinejs" defer></script>
-    </section>
-    <!-- Services Section -->
+ <!-- Services Section -->
     <section id="services" class="py-16 bg-gray-50">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Services</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Compétences opérationnelles</h2>
                 <div class="w-20 h-1 bg-indigo-600 mx-auto mb-6"></div>
                 <p class="max-w-2xl mx-auto text-lg text-gray-600">Des solutions digitales complètes pour répondre à tous vos besoins marketing & communication.</p>
             </div>
@@ -318,7 +210,115 @@ Selon vos besoins, je peux intervenir comme chargé de marketing digital, chef d
             </div>
         </div>
     </section>
+    
+    <!-- Compétences Section -->
+    <section id="stats" class="py-16 bg-indigo-900 text-white">
+<div class="container mx-auto px-6">
+  <div class="text-center mb-16">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Outils & technologies mâitrisés</h2>
+    <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
+    <p class="max-w-2xl mx-auto text-lg text-indigo-200">Compétences transverses pour accompagner vos projets</p>
+  </div>
 
+  <div class="grid gap-6 max-w-3xl mx-auto">
+    
+    <!-- Analyse & Gestion de données -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl md:text-2xl font-bold">
+        <div class="flex items-center gap-3">
+          <!-- Icon: Database -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 md:w-8 md:h-8 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7c0 1.657 3.582 3 8 3s8-1.343 8-3M4 7v10c0 1.657 3.582 3 8 3s8-1.343 8-3V7M4 12c0 1.657 3.582 3 8 3s8-1.343 8-3"/>
+          </svg>
+          Analyse & Gestion Data/CRM
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Salesforce</li>
+          <li>Google Analytics</li>
+          <li>Looker Studio</li>
+          <li>ERP / CMS</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Marketing digital & Création -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl md:text-2xl font-bold">
+        <div class="flex items-center gap-3">
+          <!-- Icon: Megaphone -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 md:w-8 md:h-8 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5l6-2v14l-6-2H7a2 2 0 01-2-2V9a2 2 0 012-2h4zM5 9v6"/>
+          </svg>
+          Marketing digital & Création
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Mailchimp</li>
+          <li>Brevo</li>
+          <li>Canva</li>
+          <li>Suite Adobe</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Productivité & Collaboration -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl md:text-2xl font-bold">
+        <div class="flex items-center gap-3">
+          <!-- Icon: Users -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 md:w-8 md:h-8 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-4-4h-1M9 20H4v-2a4 4 0 014-4h1m0-4a4 4 0 100-8 4 4 0 000 8zm8 0a4 4 0 100-8 4 4 0 000 8z"/>
+          </svg>
+          Productivité & Collaboration
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Google Suite (Docs, Sheets, Slides, Drive…)</li>
+          <li>Suite Microsoft (Word, Excel, PowerPoint, Outlook…)</li>
+          <li>Notion, Asana, Trello, Monday</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Technologies & Innovation -->
+    <div x-data="{ open: false }" class="bg-indigo-900 p-6 rounded-2xl shadow-md">
+      <button @click="open = !open" class="w-full flex justify-between items-center text-xl md:text-2xl font-bold">
+        <div class="flex items-center gap-3">
+          <!-- Icon: Sparkles -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 md:w-8 md:h-8 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l1.5-3L10 6l-3.5-2L5 1l-1.5 3L0 6l3.5 2L5 11zm14 12l2-4 4-2-4-2-2-4-2 4-4 2 4 2 2 4zM12 22l1-2 2-1-2-1-1-2-1 2-2 1 2 1 1 2z"/>
+          </svg>
+          Technologies & Innovation
+        </div>
+        <svg :class="{'rotate-180': open}" class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+      <div x-show="open" x-transition class="mt-4 text-indigo-200 space-y-2">
+        <ul class="list-disc list-inside space-y-1">
+          <li>Outils et solutions d’IA (ChatGPT et autres)</li>
+          <li>Développement web léger / front-end : HTML, CSS, JavaScript</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="//unpkg.com/alpinejs" defer></script>
+    </section>
+   
     <!-- Portfolio Section -->
     <section id="portfolio" class="py-16">
         <div class="container mx-auto px-6">
