@@ -113,13 +113,28 @@ Selon vos besoins, je peux intervenir comme chargé de marketing digital, chef d
     </section>
     <!-- Stats Section -->
     <section id="stats" class="py-16 bg-indigo-900 text-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Compétences</h2>
-                <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
-                <p class="max-w-2xl mx-auto text-lg text-indigo-200">Compétences transverses pour accompagner vos projets</p>
-            </div>
-            
+  <div class="container mx-auto px-6">
+  <div class="text-center mb-16">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">Mes Compétences</h2>
+    <div class="w-20 h-1 bg-white mx-auto mb-6"></div>
+    <p class="max-w-2xl mx-auto text-lg text-indigo-200">Compétences transverses pour accompagner vos projets</p>
+  </div>
+
+  <div x-data="{ open: false }" class="max-w-xl mx-auto bg-indigo-900 text-white p-6 rounded-2xl shadow-md">
+    <button @click="open = !open" class="w-full flex justify-between items-center font-semibold text-lg">
+      Stratégie marketing & digitale
+      <svg :class="{'rotate-180': open}" class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+
+    <div x-show="open" x-transition class="mt-4 text-indigo-200">
+      Élaboration de plans de communication, acquisition & B2B/B2C
+    </div>
+  </div>
+</div>
+<script src="//unpkg.com/alpinejs" defer></script>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Stat 1 -->
                 <div class="bg-indigo-800 p-8 rounded-lg text-center stats-item">
