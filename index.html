@@ -117,6 +117,61 @@
 </div>
     </section>
 
+     <!-- Logos -->
+<section class="bg-white py-12">
+  <div class="max-w-6xl mx-auto text-center px-4">
+    <h2 class="text-3xl font-bold mb-2">J'ai travaillé avec eux</h2>
+    <p class="text-gray-600 mb-8">Échange lors d'emploi, alternance ou projet d'étude</p>
+    
+    <!-- Container du défilement -->
+    <div class="relative overflow-hidden">
+      <div class="flex animate-scroll space-x-8 hover:pause-scroll">
+        <!-- Logos (1ère série) -->
+        <img src="airfrance.png" alt="Air France KLM Cargo" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="cmi.png" alt="Cmi Media" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="lumapps.png" alt="LumApps" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="redbull.png" alt="Red Bull" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="spf.png" alt="Secours Populaire Français" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="jardinsloisirs.png" alt="Jardins Loisirs" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="rayser.png" alt="Rayser" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="vapoter.png" alt="Vapoter.fr" class="h-12 sm:h-16 md:h-20 object-contain">
+
+        <!-- Logos (2ème série pour effet infini) -->
+        <img src="airfrance.png" alt="Air France KLM Cargo" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="cmi.png" alt="Cmi Media" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="lumapps.png" alt="LumApps" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="redbull.png" alt="Red Bull" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="spf.png" alt="Secours Populaire Français" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="jardinsloisirs.png" alt="Jardins Loisirs" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="rayser.png" alt="Rayser" class="h-12 sm:h-16 md:h-20 object-contain">
+        <img src="vapoter.png" alt="Vapoter.fr" class="h-12 sm:h-16 md:h-20 object-contain">
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-scroll {
+  display: flex;
+  width: max-content;
+  animation: scroll 30s linear infinite;
+}
+.hover\:pause-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Responsive tweaks si nécessaire */
+@media (max-width: 640px) {
+  .animate-scroll {
+    animation-duration: 50s; /* plus lent sur petit écran */
+  }
+}
+</style>
+    
  <!-- Compétences Section -->
     <section id="compétences" class="py-16 bg-gray-50">
         <div class="container mx-auto px-6">
@@ -412,7 +467,7 @@
     </section>
 
 <!-- Temoignages -->
-    <section id="temoignage" class="py-16 bg-blue-200 text-white">
+    <section id="temoignage" class="py-16 bg-blue-300 text-white">
             <div class="mt-16 bg-white bg-opacity-10 rounded-xl p-8">
                 <h3 class="text-2xl font-bold mb-6 text-center">Témoignages clients</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -623,7 +678,7 @@
             // window.location.href = 'path-to-your-cv.pdf';
         });
 
-        <!--Ajout EmailJS-->
+            <!-- Email -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
 <script>
     (function(){
