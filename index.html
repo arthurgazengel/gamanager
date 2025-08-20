@@ -412,7 +412,7 @@
     </section>
 
 <!-- Temoignages -->
-    <section id="temoignage" class="py-16 bg-slate-200 text-white">
+    <section id="temoignage" class="py-16 bg-blue-200 text-white">
             <div class="mt-16 bg-white bg-opacity-10 rounded-xl p-8">
                 <h3 class="text-2xl font-bold mb-6 text-center">Témoignages clients</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -424,7 +424,7 @@
                             </div>
                             <div class="ml-4">
                                 <div class="font-bold">Stéphane D.</div>
-                                <div class="text-blue-300">Directeur d'Exploitation</div>
+                                <div class="text-blue-300">Directeur d'Exploitation, Jardins Loisirs</div>
                             </div>
                         </div>
                         <p class="text-blue-100 italic">"Arthur est un professionnel talentueux et passionné dans son domaine. Il possède une grande expérience dans la création de stratégies de marketing en ligne, la création de contenu digital et le suivi des performances des campagnes. Je recommande vivement Arthur pour son professionnalisme et son efficacité."</p>
@@ -445,7 +445,7 @@
                             </div>
                             <div class="ml-4">
                                 <div class="font-bold">Emanuelle F.</div>
-                                <div class="text-blue-300">Business Developer</div>
+                                <div class="text-blue-300">Business Developer, Air France KLM</div>
                             </div>
                         </div>
                         <p class="text-blue-100 italic">"Arthur est un collaborateur fiable, concis et rapide ! J’ai beaucoup aimé échanger et apprendre à ses côtés ! Toujours dans un état d’esprit serein, il mène ses objectifs avec succès !"</p>
@@ -484,13 +484,13 @@
                                 <span>Parcours Multisectorielle (E-commerce, Groupe média, SaaS, Logistique...)</span>
                             </div>
                         </div>
-                        <button id="download-btn" class="bg-white text-red-700 px-6 py-3 rounded-md font-bold hover:bg-red-500 transition duration-300 w-full md:w-auto">
+                        <button id="download-btn" class="bg-white text-red-700 px-6 py-3 rounded-md font-bold hover:bg-red-200 transition duration-300 w-full md:w-auto">
                             <i class="fas fa-download mr-2"></i> Télécharger mon CV
                         </button>
                     </div>
                     <div class="md:w-1/2 p-8 md:p-12 flex items-center justify-center">
                         <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="CV" class="w-full max-w-xs rounded-lg shadow-xl">
+                            <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="CV" class="w-full max-w-xs rounded-lg shadow-xl">
                             <div class="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-md">
                                 <i class="fas fa-file-pdf text-4xl text-red-500"></i>
                             </div>
@@ -623,26 +623,45 @@
             // window.location.href = 'path-to-your-cv.pdf';
         });
 
-        // Contact form submission
-        const contactForm = document.getElementById('contact-form');
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            // Here you would typically send the data to a server
-            console.log({ name, email, subject, message });
-            
+        <!-- Ajoute EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("_TQRDmVrsimIxd3Iu"); // Ton Public Key
+    })();
+</script>
+
+<script>
+    const contactForm = document.getElementById('contact-form');
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Get form values
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+        
+        // Envoi via EmailJS
+        emailjs.send("service_bg45sta", "template_hkwctfq", {
+            from_name: name,
+            from_email: email,
+            subject: subject,
+            message: message
+        })
+        .then(() => {
             // Show success message
             alert(`Merci ${name}, votre message a été envoyé avec succès! Je vous répondrai dès que possible.`);
             
             // Reset form
             contactForm.reset();
+        })
+        .catch((error) => {
+            alert("Une erreur est survenue, veuillez réessayer.");
+            console.error("Erreur:", error);
         });
+    });
+</script>
 
         // Animation on scroll
         const animateOnScroll = () => {
