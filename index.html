@@ -679,21 +679,17 @@
 <script>
     // Initialisation avec ta Public Key
     emailjs.init("_TQRDmVrsimIxd3Iu");
-</script>
 
-<script>
     const contactForm = document.getElementById('contact-form');
 
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // Récupération des valeurs du formulaire
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const subject = document.getElementById('subject').value;
         const message = document.getElementById('message').value;
 
-        // Envoi via EmailJS
         emailjs.send("service_bg45sta", "template_hkwctfq", {
             from_name: name,
             from_email: email,
@@ -701,15 +697,11 @@
             message: message
         })
         .then(() => {
-            // Message de succès
-            alert(`Merci ${name}, votre message a été envoyé avec succès ! Je vous répondrai dès que possible.`);
-            // Reset du formulaire
+            alert(`Merci ${name}, votre message a bien été envoyé !`);
             contactForm.reset();
         })
         .catch((error) => {
-            // Message d'erreur
-            alert("Une erreur est survenue, veuillez réessayer.");
-            console.error("Erreur EmailJS :", error);
+            alert("Une erreur est survenue : " + JSON.stringify(error));
         });
     });
 </script>
