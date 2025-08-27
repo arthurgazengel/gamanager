@@ -677,97 +677,79 @@
         
 <!-- ========= CONTACT ========= -->
 <section id="contact" class="contact">
-  <h3>Envoyez un message</h3>
+  <h2>Contact</h2>
+  <p>N’hésitez pas à m’envoyer un message via ce formulaire :</p>
 
   <form id="contact-form" novalidate>
-    <!-- Honeypot anti-spam (ne pas supprimer) -->
-    <input type="text" name="company" id="company" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" tabindex="-1" aria-hidden="true">
-
+    <!-- Nom -->
     <div class="field">
-      <label for="from_name">Nom complet</label>
+      <label for="from_name">Nom</label>
       <input type="text" id="from_name" name="from_name" placeholder="Votre nom" required>
     </div>
 
+    <!-- Email -->
     <div class="field">
       <label for="from_email">Email</label>
-      <input type="email" id="from_email" name="from_email" placeholder="votre@email.com" required>
+      <input type="email" id="from_email" name="from_email" placeholder="Votre email" required>
     </div>
 
+    <!-- Sujet -->
     <div class="field">
       <label for="subject">Sujet</label>
       <input type="text" id="subject" name="subject" placeholder="Sujet du message">
     </div>
 
+    <!-- Message -->
     <div class="field">
       <label for="message">Message</label>
       <textarea id="message" name="message" rows="6" placeholder="Votre message..." required></textarea>
     </div>
 
+    <!-- Bouton -->
     <button id="send-btn" type="submit">Envoyer le message</button>
 
+    <!-- Zone de statut -->
     <p id="form-status" role="status" aria-live="polite" style="margin-top:8px;"></p>
   </form>
 </section>
 
 <!-- EmailJS v3 -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
-
-<script defer>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Sécurité: vérifier que la lib est chargée
-    if (!window.emailjs) {
-      console.error("EmailJS n'a pas été chargé.");
-      const st = document.getElementById('form-status');
-      if (st) st.textContent = "Erreur: le service d’envoi n'a pas pu être chargé.";
-      return;
-    }
-
-    // Initialisation avec ta Public Key
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialisation avec ta clé publique
     emailjs.init({ publicKey: "_TQRDmVrsimIxd3Iu" });
 
-    const form = document.getElementById('contact-form');
-    const btn  = document.getElementById('send-btn');
-    const st   = document.getElementById('form-status');
+    const form = document.getElementById("contact-form");
+    const status = document.getElementById("form-status");
+    const btn = document.getElementById("send-btn");
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      // Honeypot: si rempli, on ignore
-      if (form.company && form.company.value.trim() !== "") {
-        st.textContent = "Merci !";
-        form.reset();
-        return;
-      }
-
-      // Validation minimale
-      if (!form.from_name.value.trim() || !form.from_email.value.trim() || !form.message.value.trim()) {
-        st.textContent = "Merci de remplir les champs requis.";
-        return;
-      }
-
-      // UI: empêcher les doubles envois
+      // UI : désactiver le bouton pendant l’envoi
       btn.disabled = true;
-      const btnOld = btn.textContent;
-      btn.textContent = "Envoi en cours…";
-      st.textContent = "";
+      btn.textContent = "Envoi en cours...";
+      status.textContent = "";
 
-      // Envoi via sendForm (mappe automatiquement les champs 'name=')
+      // Envoi avec EmailJS
       emailjs.sendForm("service_bg45sta", "template_hkwctfq", form)
-        .then(function () {
-          st.textContent = `Merci ${form.from_name.value}, votre message a bien été envoyé.`;
+        .then(() => {
+          status.textContent = `Merci ${form.from_name.value}, ton message a bien été envoyé !`;
           form.reset();
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.error(error);
-          st.textContent = "Une erreur est survenue : " + (error?.text || JSON.stringify(error));
+          status.textContent = "Une erreur est survenue : " + (error?.text || "Vérifie ta configuration EmailJS.");
         })
-        .finally(function () {
+        .finally(() => {
           btn.disabled = false;
-          btn.textContent = btnOld;
+          btn.textContent = "Envoyer le message";
         });
     });
   });
 </script>
+
 
 <!-- Animation on scroll -->
 <script>
