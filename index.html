@@ -681,43 +681,6 @@
             alert('Téléchargement du CV en cours...');
             // window.location.href = 'path-to-your-cv.pdf';
         });
-        
-
-<!-- EmailJS v3 -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  // Initialisation avec ta clé publique
-  emailjs.init({ publicKey: "_TQRDmVrsimIxd3Iu" });
-
-  const form = document.getElementById("contact-form");
-  const status = document.getElementById("form-status");
-  const btn = document.getElementById("send-btn");
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    btn.disabled = true;
-    btn.textContent = "Envoi en cours...";
-    status.textContent = "";
-
-    emailjs.sendForm("service_bg45sta", "template_hkwctfq", form)
-      .then(() => {
-        status.textContent = `Merci ${form.from_name.value}, ton message a bien été envoyé !`;
-        form.reset();
-      })
-      .catch((error) => {
-        console.error("Erreur EmailJS:", error);
-        status.textContent = "Erreur lors de l’envoi : " + (error.text || "vérifie ta configuration.");
-      })
-      .finally(() => {
-        btn.disabled = false;
-        btn.textContent = "Envoyer le message ✉️";
-      });
-  });
-});
-</script>
-
 
 <!-- Animation on scroll -->
 <script>
@@ -743,5 +706,53 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener('load', animateOnScroll);
     window.addEventListener('scroll', animateOnScroll);
 </script>
+    
+    <!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialisation avec ta clé publique
+    emailjs.init("_TQRDmVrsimIxd3Iu");
+
+    const form = document.getElementById("contact-form");
+    const status = document.createElement("p");
+    status.id = "form-status";
+    status.className = "mt-4 text-center font-semibold";
+    form.appendChild(status);
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Récupérer les champs
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const subject = document.getElementById("subject").value;
+      const message = document.getElementById("message").value;
+
+      // Message temporaire
+      status.textContent = "Envoi en cours...";
+      status.className = "mt-4 text-center font-semibold text-blue-600";
+
+      // Envoi EmailJS
+      emailjs.send("service_bg45sta", "template_hkwctfq", {
+        from_name: name,
+        from_email: email,
+        subject: subject,
+        message: message
+      })
+      .then(() => {
+        status.textContent = `Merci ${name}, ton message a bien été envoyé !`;
+        status.className = "mt-4 text-center font-semibold text-green-600";
+        form.reset();
+      })
+      .catch((error) => {
+        console.error("Erreur :", error);
+        status.textContent = "Une erreur est survenue, merci de réessayer.";
+        status.className = "mt-4 text-center font-semibold text-red-600";
+      });
+    });
+  });
+</script>
+
 </body>
 </html>
