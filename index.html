@@ -614,27 +614,34 @@
     <input type="text" id="from_name" name="from_name" required
            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
   </div>
+
   <div>
     <label for="from_email" class="block font-medium mb-1">Email</label>
     <input type="email" id="from_email" name="from_email" required
            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
   </div>
+
   <div>
     <label for="subject" class="block font-medium mb-1">Sujet</label>
     <input type="text" id="subject" name="subject"
            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
   </div>
+
   <div>
     <label for="message" class="block font-medium mb-1">Message</label>
     <textarea id="message" name="message" rows="4" required
               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
   </div>
+
   <button id="send-btn" type="submit"
           class="bg-red-700 text-white px-6 py-3 rounded-md font-bold hover:bg-red-500 transition duration-300 w-full">
     Envoyer le message <i class="fas fa-paper-plane ml-2"></i>
   </button>
-  <p id="form-status" class="text-sm mt-2 text-gray-600"></p>
+
+  <!-- Un SEUL élément statut -->
+  <p id="form-status" class="mt-4 text-center font-semibold"></p>
 </form>
+
 
                     </div>
                 </div>
@@ -707,52 +714,98 @@
     window.addEventListener('scroll', animateOnScroll);
 </script>
     
-    <!-- EmailJS -->
+   <!-- EmailJS v3 -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Initialisation avec ta clé publique
-    emailjs.init("_TQRDmVrsimIxd3Iu");
+document.addEventListener('DOMContentLoaded', function () {
+  /* ----- UI courante (menu, ancre, CV, animations) ----- */
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+  }
 
-    const form = document.getElementById("contact-form");
-    const status = document.createElement("p");
-    status.id = "form-status";
-    status.className = "mt-4 text-center font-semibold";
-    form.appendChild(status);
-
-    form.addEventListener("submit", function (e) {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      const targetId = anchor.getAttribute('href');
+      if (!targetId || targetId === '#') return;
+      const target = document.querySelector(targetId);
+      if (!target) return;
       e.preventDefault();
-
-      // Récupérer les champs
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const subject = document.getElementById("subject").value;
-      const message = document.getElementById("message").value;
-
-      // Message temporaire
-      status.textContent = "Envoi en cours...";
-      status.className = "mt-4 text-center font-semibold text-blue-600";
-
-      // Envoi EmailJS
-      emailjs.send("service_bg45sta", "template_hkwctfq", {
-        from_name: name,
-        from_email: email,
-        subject: subject,
-        message: message
-      })
-      .then(() => {
-        status.textContent = `Merci ${name}, ton message a bien été envoyé !`;
-        status.className = "mt-4 text-center font-semibold text-green-600";
-        form.reset();
-      })
-      .catch((error) => {
-        console.error("Erreur :", error);
-        status.textContent = "Une erreur est survenue, merci de réessayer.";
-        status.className = "mt-4 text-center font-semibold text-red-600";
-      });
+      if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        mobileMenu.classList.add('hidden');
+      }
+      window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
     });
   });
+
+  const downloadBtn = document.getElementById('download-btn');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      alert('Téléchargement du CV en cours...');
+      // window.location.href = 'path-to-your-cv.pdf';
+    });
+  }
+
+  const animateOnScroll = () => {
+    const elements = document.querySelectorAll('.card-hover, .stats-item');
+    elements.forEach(el => {
+      const elementPosition = el.getBoundingClientRect().top;
+      const screenPosition = window.innerHeight / 1.3;
+      if (elementPosition < screenPosition) {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }
+    });
+  };
+  document.querySelectorAll('.card-hover, .stats-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'all 0.6s ease';
+  });
+  window.addEventListener('load', animateOnScroll);
+  window.addEventListener('scroll', animateOnScroll);
+
+  /* ----- EmailJS (contact) ----- */
+  emailjs.init({ publicKey: '_TQRDmVrsimIxd3Iu' });
+
+  const form   = document.getElementById('contact-form');
+  const status = document.getElementById('form-status');
+  const btn    = document.getElementById('send-btn');
+
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // UI : état "envoi"
+      if (btn) { btn.disabled = true; btn.textContent = 'Envoi en cours...'; }
+      if (status) { status.textContent = ''; status.className = 'mt-4 text-center font-semibold text-blue-600'; }
+
+      // Envoi en utilisant les attributs name du formulaire
+      emailjs.sendForm('service_bg45sta', 'template_hkwctfq', form)
+        .then(function () {
+          if (status) {
+            const who = form.from_name?.value?.trim() || '🙂';
+            status.textContent = `Merci ${who}, ton message a bien été envoyé !`;
+            status.className = 'mt-4 text-center font-semibold text-green-600';
+          }
+          form.reset();
+        })
+        .catch(function (error) {
+          console.error('EmailJS error:', error);
+          if (status) {
+            status.textContent = 'Une erreur est survenue : ' + (error?.text || 'vérifie ta configuration EmailJS.');
+            status.className = 'mt-4 text-center font-semibold text-red-600';
+          }
+        })
+        .finally(function () {
+          if (btn) { btn.disabled = false; btn.textContent = 'Envoyer le message'; }
+        });
+    });
+  }
+});
 </script>
+
 
 </body>
 </html>
