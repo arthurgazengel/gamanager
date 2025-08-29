@@ -714,8 +714,8 @@
     window.addEventListener('scroll', animateOnScroll);
 </script>
     
-   <!-- EmailJS v3 -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+   <!-- EmailJS v2-->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   /* ----- UI courante (menu, ancre, CV, animations) ----- */
@@ -767,7 +767,8 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('scroll', animateOnScroll);
 
   /* ----- EmailJS (contact) ----- */
-  emailjs.init({ publicKey: '_TQRDmVrsimIxd3Iu' });
+  // Initialisation avec ta clé publique (ancienne génération)
+  emailjs.init("A2gKH9USUkGhfyeIL");
 
   const form   = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
@@ -779,9 +780,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // UI : état "envoi"
       if (btn) { btn.disabled = true; btn.textContent = 'Envoi en cours...'; }
-      if (status) { status.textContent = ''; status.className = 'mt-4 text-center font-semibold text-blue-600'; }
+      if (status) { status.textContent = 'Envoi en cours...'; status.className = 'mt-4 text-center font-semibold text-blue-600'; }
 
-      // Envoi en utilisant les attributs name du formulaire
+      // Envoi avec EmailJS v2
       emailjs.sendForm('service_bg45sta', 'template_hkwctfq', form)
         .then(function () {
           if (status) {
@@ -805,7 +806,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 </script>
-
 
 </body>
 </html>
