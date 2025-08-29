@@ -50,22 +50,23 @@
     <!-- Navigation -->
     <nav class="bg-blue-700 text-white shadow-lg fixed w-full z-10">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <i class="fas fa-chart-line text-2xl text-blue-300"></i>
-                <span class="font-bold text-xl">GA manager</span>
-            </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#home" class="nav-link">Accueil</a>
-                <a href="#compétences" class="nav-link">Mes compétences</a>
-                <a href="#logiciels" class="nav-link">Mes logiciels</a>
-                <a href="#réalisations" class="nav-link">Mes réalisations</a>
-                <a href="#contact" class="nav-link">Contact</a>
-                <a href="#cv" class="bg-white text-blue-500 px-4 py-2 rounded-md font-medium hover:bg-blue-200 transition duration-300">Télécharger CV</a>
-            </div>
-            <button class="md:hidden focus:outline-none" id="menu-btn">
-                <i class="fas fa-bars text-xl"></i>
-            </button>
-        </div>
+    <div class="flex items-center space-x-4">
+        <a href="#home">
+            <img src="https://via.placeholder.com/100x40?text=Logo" alt="GA Manager Logo" class="h-10">
+        </a>
+    </div>
+    <div class="hidden md:flex items-center space-x-8">
+        <a href="#home" class="nav-link">Accueil</a>
+        <a href="#compétences" class="nav-link">Mes compétences</a>
+        <a href="#logiciels" class="nav-link">Mes logiciels</a>
+        <a href="#réalisations" class="nav-link">Mes réalisations</a>
+        <a href="#contact" class="nav-link">Contact</a>
+        <a href="#cv" class="bg-white text-blue-500 px-4 py-2 rounded-md font-medium hover:bg-blue-200 transition duration-300">Télécharger CV</a>
+    </div>
+    <button class="md:hidden focus:outline-none" id="menu-btn">
+        <i class="fas fa-bars text-xl"></i>
+    </button>
+</div>
         <!-- Mobile menu -->
         <div class="md:hidden hidden bg-blue-900 w-full px-6 py-4" id="mobile-menu">
             <div class="flex flex-col space-y-4">
