@@ -7,45 +7,69 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .hero-gradient {
-    background: url('https://images.unsplash.com/photo-1513530534585-c7b1394c6d51?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover;}
+.hero-gradient {
+    /* Image de fond */
+    background-image: url('https://images.unsplash.com/photo-1513530534585-c7b1394c6d51?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover;       /* couvre tout le bloc */
+    background-position: center;  /* centrage de l'image */
+    background-repeat: no-repeat; /* pas de répétition */
+    position: relative;           /* nécessaire pour overlay et z-index */
+}
 
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .stats-item {
-            transition: all 0.3s ease;
-        }
-        .stats-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        .nav-link {
-            position: relative;
-        }
-        .nav-link:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 0;
-            background-color: white;
-            transition: width 0.3s ease;
-        }
-        .nav-link:hover:after {
-            width: 100%;
-        }
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-    </style>
+/* Overlay sombre optionnel pour lisibilité du texte */
+.hero-gradient::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* ajustable selon contraste */
+    z-index: 0;
+}
+
+/* Contenu au-dessus de l'image */
+.hero-gradient > .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Autres styles déjà présents */
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.stats-item {
+    transition: all 0.3s ease;
+}
+.stats-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.nav-link {
+    position: relative;
+}
+.nav-link:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: white;
+    transition: width 0.3s ease;
+}
+.nav-link:hover:after {
+    width: 100%;
+}
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+</style>
 </head>
 <body class="font-sans antialiased text-gray-800">
     <!-- Navigation -->
@@ -99,14 +123,6 @@
                 </a>
             </div>
         </div>
-
-        <!-- Image -->
-        <div class="md:w-1/2 flex justify-center">
-            <img src="https://media.licdn.com/dms/image/v2/D4E03AQEVb9e35SzliA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1719233894799?e=1759363200&v=beta&t=kvqJl0hsnvMVTVGae6XRU0LXF8vgKFi4Ov0FRAUMEdY" 
-                 alt="Marketing Digital" 
-                 class="rounded-lg shadow-2xl w-full max-w-md animate-float">
-        </div>
-
     </div>
 </section>
  <!-- А propos de moi -->
